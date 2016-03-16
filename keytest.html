@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="support/jquery-1.7.2.js"></script>
+<script type="text/javascript">
+$(function() {
+	$("#inspan").focus();		
+	$("#inspan").on("keydown", function (e) { log("keydown: "+e.which);})
+			.on("keypress", function (e) { log("keypress: "+e.which);})
+});
+function log(c) {
+	var d = $('#log');
+	d.html(d.html() + c + '<br/>');
+	d.scrollTop(d.prop("scrollHeight"));
+}
+</script>
+</head>
+<body>
+
+<textarea id="inspan" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" x-palm-disable-ste-all="true">hi</textarea>
+
+<div id="log" style="height: 300px; overflow: scroll"></div>
+
+</body>
+</html>

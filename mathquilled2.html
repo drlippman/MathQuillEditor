@@ -1,0 +1,410 @@
+<div id="mqeedd" class="mqeedd" onclick="showee();">&uarr;</div>
+<div id="mqee">
+<div id="mqeetopbar"><div id="mqeeclosebutton">X</div><span>MathQuill</span></div>
+<div id="mqeeinsides">
+<div id="mqeeeditorcont">
+
+<div id="bigtabcontainer">
+<ul class="tabs">
+	<li class="active"><a href="#tabs-general">
+	<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-sqrt-prefix" style="transform: scale(1, 0.9);">&radic;</span><span class="mq-sqrt-stem mq-non-leaf"><span class="emptybox">&nbsp;</span></span></span></span>
+
+	</a></li>
+	<li><a href="#tabs-brackets">( )</a></li>
+	<li><a href="#tabs-sets">&le;</a></li>
+	<li><a href="#tabs-symbols">&infin;</a></li>
+	<li><a href="#tabs-acc">
+	<span class="mq-math-mode" style="cursor: pointer;"><span class="mq-non-leaf"><span class="mq-vector-prefix">&rarr;</span><span class="mq-vector-stem" style="text-align:center"><span class="emptybox">&nbsp;</span></span></span></span>
+	</a></li>
+	<li><a href="#tabs-calc">&int;</a></li>
+	<li><a href="#tabs-greek">&theta;</a></li>
+	<li><a href="#tabs-trig">sin</a></li>
+	<li><a href="#tabs-letters"><i>x</i></a></li>
+</ul>
+<div class="tab_container">
+<div id="tabs-general" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="/" btntype="key">
+<span class="mq-math-mode"><span class="mq-fraction mq-non-leaf"><span class="mq-numerator"><span class="emptybox wide">&nbsp;</span></span><span class="mq-denominator"><span class="emptybox wide">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="^" btntype="key">
+<span class="mq-math-mode"><var>x</var><span class="mq-supsub mq-non-leaf mq-sup-only"><span class="mq-sup"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="_" btntype="key">
+<span class="mq-math-mode"><var>x</var><span class="mq-supsub mq-non-leaf"><span class="mq-sub"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="\\sqrt" btntype="cmd">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-sqrt-prefix" style="transform: scale(1, 0.9);">&radic;</span><span class="mq-sqrt-stem mq-non-leaf"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="\\nthroot{3}" btntype="sfunc">
+<span class="mq-math-mode"><sup class="mq-nthroot mq-non-leaf"><var>n</var></sup><span class="mq-scaled"><span class="mq-scaled mq-sqrt-prefix" style="transform: scale(1, 0.9);">&radic;</span><span class="mq-sqrt-stem mq-non-leaf"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="|" btntype="key">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">|</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">|</span></span>
+</td>
+<td class="mqeebtn" btntext="(" btntype="key">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">(</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">)</span></span>
+</td>
+<td class="mqeebtn" btntext="\\pi" btntype="latex">
+<span class="mq-math-mode"><span class="nonSymbola">&pi;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\log" btntype="latex">
+<span class="mq-math-mode"><span class="mq-non-leaf">log</span></span>
+</td>
+<td class="mqeebtn" btntext="\\ln" btntype="latex">
+<span class="mq-math-mode"><span class="mq-non-leaf">ln</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-brackets" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="()" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">(</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">)</span></span>
+</td>
+<td class="mqeebtn" btntext="[)" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">[</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">)</span></span>
+</td>
+<td class="mqeebtn" btntext="(]" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">(</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">]</span></span>
+</td>
+<td class="mqeebtn" btntext="[]" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">[</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">]</span></span>
+</td>
+<td class="mqeebtn" btntext="||" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">|</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">|</span></span>
+</td>
+<td class="mqeebtn" btntext="\\langle" btntype="cmd">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">&lang;</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">&rang;</span></span>
+</td>
+<td class="mqeebtn" btntext="{}" btntype="int">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">{</span><span class="mq-non-leaf"><span class="emptybox brack">&nbsp;</span></span><span class="mq-scaled mq-paren" style="transform: scale(1, 1.17);">}</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-sets" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="<" btntype="latex">
+<span class="mq-math-mode"><span>&lt;</span></span>
+</td>
+<td class="mqeebtn" btntext=">" btntype="latex">
+<span class="mq-math-mode"><span>&gt;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\le" btntype="latex">
+<span class="mq-math-mode"><span>&le;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\ge" btntype="latex">
+<span class="mq-math-mode"><span>&ge;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\ne" btntype="latex">
+<span class="mq-math-mode"><span>&ne;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\in" btntype="latex">
+<span class="mq-math-mode"><span class="binary-operator">&isin;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\cup" btntype="latex">
+<span class="mq-math-mode"><span class="binary-operator">&cup;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\cap" btntype="latex">
+<span class="mq-math-mode"><span class="binary-operator">&cap;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\subset" btntype="latex">
+<span class="mq-math-mode"><span class="binary-operator">&sub;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\subseteq" btntype="latex">
+<span class="mq-math-mode"><span class="binary-operator">&sube;</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-symbols" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="\\pi" btntype="latex">
+<span class="mq-math-mode"><span class="nonSymbola">&pi;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\infty" btntype="latex">
+<span class="mq-math-mode"><span>&infin;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\pm" btntype="latex">
+<span class="mq-math-mode"><span class="nonSymbola">&plusmn;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\times" btntype="latex">
+<span class="mq-math-mode"><span class="nonSymbola">&times;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\approx" btntype="latex">
+<span class="mq-math-mode"><span>&asymp;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\varnothing" btntype="latex">
+<span class="mq-math-mode"><span>&empty;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\Re" btntype="latex">
+<span class="mq-math-mode"><span>&real;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\rarr" btntype="latex">
+<span class="mq-math-mode"><span>&rarr;</span></span>
+</td>
+<td class="mqeebtn" btntext="!" btntype="key">
+<span class="mq-math-mode"><span class="nonSymbola">!</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-acc" class="tab_content">
+<table>
+<tr>
+
+<td class="mqeebtn" btntext="\\vec" btntype="sfunc">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-vector-prefix">&rarr;</span><span class="mq-vector-stem"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+<td class="mqeebtn" btntext="\\bar" btntype="sfunc">
+<span class="mq-math-mode"><span class="mq-non-leaf mq-overline"><span class="emptybox">&nbsp;</span></span></span>
+</td>
+<td class="mqeebtn" btntext="\\hat" btntype="sfunc">
+<span class="mq-math-mode"><span class="mq-non-leaf"><span class="mq-hat-prefix">^</span><span class="mq-hat-stem"><span class="emptybox">&nbsp;</span></span></span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-calc" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="\\int" btntype="latex">
+<span class="mq-math-mode"><big>&int;</big></span>
+</td>
+<td class="mqeebtn" btntext="\\int_a^b" btntype="latex">
+<span class="mq-math-mode"><big>&int;</big><span class="mq-supsub mq-non-leaf mq-limit">
+  <span class="mq-sup">
+    <var>b</var>
+  </span>
+  <span class="mq-sub">
+    <var>a</var>
+  </span>
+  <span style="display:inline-block;width:0"></span>
+</span>
+</span>
+</td>
+<td class="mqeebtn" btntext="\\sum_a^b" btntype="latex">
+<span class="mq-math-mode">
+<span class="mq-large-operator mq-non-leaf">
+  <span class="mq-to">
+    <span>
+      <var>b</var>
+    </span>
+  </span>
+  <big>&sum;</big>
+  <span class="mq-from">
+    <span>
+      <var>a</var>
+    </span>
+  </span>
+</span>
+</span>
+</td>
+
+
+<td class="mqeebtn" btntext="\\lim_{x \rarr a}" btntype="latex">
+<span class="mq-math-mode">
+<var class="mq-operator-name">lim</var>
+<span class="mq-supsub mq-non-leaf">
+  <span class="mq-sub">
+    <var>x</var>
+    <span>&rarr;</span>
+    <var>a</var>
+  </span>
+</span>
+</span>
+</td>
+
+<td class="mqeebtn" btntext="\\nabla" btntype="latex">
+<span class="mq-math-mode"><span>&nabla;</span></span>
+</td>
+<td class="mqeebtn" btntext="\\partial" btntype="latex">
+<span class="mq-math-mode"><span class="nonSymbola">&part;</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-greek" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="\\alpha" btntype="latex">
+<span class="mq-math-mode"><var>&alpha;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\beta" btntype="latex">
+<span class="mq-math-mode"><var>&beta;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\gamma" btntype="latex">
+<span class="mq-math-mode"><var>&gamma;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\delta" btntype="latex">
+<span class="mq-math-mode"><var>&delta;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\epsilon" btntype="latex">
+<span class="mq-math-mode"><var>&epsilon;</var></span>
+</td>
+
+<td>&nbsp;</td>
+<td class="mqeebtn" btntext="\\mu" btntype="latex">
+<span class="mq-math-mode"><var>&mu;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\sigma" btntype="latex">
+<span class="mq-math-mode"><var>&sigma;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\chi" btntype="latex">
+<span class="mq-math-mode"><var>&chi;</var></span>
+</td>
+
+<td>&nbsp;</td>
+<td class="mqeebtn" btntext="\\theta" btntype="latex">
+<span class="mq-math-mode"><var>&theta;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\phi" btntype="latex">
+<span class="mq-math-mode"><var>&phi;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\rho" btntype="latex">
+<span class="mq-math-mode"><var>&rho;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\kappa" btntype="latex">
+<span class="mq-math-mode"><var>&kappa;</var></span>
+</td>
+<td class="mqeebtn" btntext="\\Delta" btntype="latex">
+<span class="mq-math-mode"><span>&Delta;</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-trig" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="\\sin" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">sin</span></span>
+</td>
+<td class="mqeebtn" btntext="\\cos" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">cos</span></span>
+</td>
+<td class="mqeebtn" btntext="\\tan" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">tan</span></span>
+</td>
+<td class="mqeebtn" btntext="\\sec" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">sec</span></span>
+</td>
+<td class="mqeebtn" btntext="\\csc" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">csc</span></span>
+</sup></td>
+<td class="mqeebtn" btntext="\\cot" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">cot</span></span>
+</sup></td>
+<td class="mqeebtn" btntext="\\arcsin" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">arcsin</span></span>
+</td>
+<td class="mqeebtn" btntext="\\arccos" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">arccos</span></span>
+</td>
+<td class="mqeebtn" btntext="\\arctan" btntype="latex">
+<span class="mq-math-mode"><span class="mq-operator-name">arctan</span></span>
+</td>
+</tr>
+</table>
+</div>
+
+<div id="tabs-letters" class="tab_content">
+<table>
+<tr>
+<td class="mqeebtn" btntext="a" btntype="key">a</td>
+<td class="mqeebtn" btntext="b" btntype="key">b</td>
+<td class="mqeebtn" btntext="c" btntype="key">c</td>
+<td class="mqeebtn" btntext="d" btntype="key">d</td>
+<td class="mqeebtn" btntext="e" btntype="key">e</td>
+<td class="mqeebtn" btntext="f" btntype="key">f</td>
+<td class="mqeebtn" btntext="g" btntype="key">g</td>
+<td class="mqeebtn" btntext="h" btntype="key">h</td>
+<td class="mqeebtn" btntext="i" btntype="key">i</td>
+<td class="mqeebtn" btntext="j" btntype="key">j</td>
+<td class="mqeebtn" btntext="k" btntype="key">k</td>
+<td class="mqeebtn" btntext="l" btntype="key">l</td>
+<td class="mqeebtn" btntext="m" btntype="key">m</td>
+</tr>
+<tr>
+<td class="mqeebtn" btntext="n" btntype="key">n</td>
+<td class="mqeebtn" btntext="o" btntype="key">o</td>
+<td class="mqeebtn" btntext="p" btntype="key">p</td>
+<td class="mqeebtn" btntext="q" btntype="key">q</td>
+<td class="mqeebtn" btntext="r" btntype="key">r</td>
+<td class="mqeebtn" btntext="s" btntype="key">s</td>
+<td class="mqeebtn" btntext="t" btntype="key">t</td>
+<td class="mqeebtn" btntext="u" btntype="key">u</td>
+<td class="mqeebtn" btntext="v" btntype="key">v</td>
+<td class="mqeebtn" btntext="w" btntype="key">w</td>
+<td class="mqeebtn" btntext="x" btntype="key">x</td>
+<td class="mqeebtn" btntext="y" btntype="key">y</td>
+<td class="mqeebtn" btntext="z" btntype="key">z</td>
+</table>
+</div>
+
+
+</div>
+</div>
+
+
+
+
+<div id="mqholder"><span class="mathquill-editable" id="mqarea"></span></div>
+</div>
+
+<input type="button" value="Save" onclick="savemathquill()" style="float: right;"/>
+<div style="float: left">
+<table class="cursor-icons">
+<tr><td class="mqeebtn" btntext="Left" btntype="ctrl" rowspan="2" ><div class="left">&nbsp;</div></td>
+  <td class="mqeebtn" btntext="Up" btntype="ctrl"><div class="up">&nbsp;</div></td>
+  <td class="mqeebtn" btntext="Right" btntype="ctrl" rowspan="2"><div class="right">&nbsp;</div></td>
+  <td rowspan="2" style="width:25px;">&nbsp;</td><td rowspan="2" class="mqeebtn" btntext="Backspace" btntype="ctrl"><div class="back">&nbsp;</div></td></tr>
+<tr><td class="mqeebtn" btntext="Down" btntype="ctrl"><div class="down">&nbsp;</div></td></tr>
+</table>
+</div>
+<div style="float: left; margin-left: 25px; border: 1px solid #999">
+<table class="number-pad">
+<tr>
+  <td class="mqeebtn" btntext="7" btntype="key">7</td>
+  <td class="mqeebtn" btntext="8" btntype="key">8</td>
+  <td class="mqeebtn" btntext="9" btntype="key">9</td>
+  <td class="mqeebtn" btntext="/" btntype="key">/</td>
+  <td class="mqeebtn" btntext="x" btntype="key"><i>x</i></td>
+</tr>
+<tr>
+  <td class="mqeebtn" btntext="4" btntype="key">4</td>
+  <td class="mqeebtn" btntext="5" btntype="key">5</td>
+  <td class="mqeebtn" btntext="6" btntype="key">6</td>
+  <td class="mqeebtn" btntext="*" btntype="key">&middot;</td>
+  <td class="mqeebtn" btntext="y" btntype="key"><i>y</i></td>
+</tr>
+<tr>
+  <td class="mqeebtn" btntext="1" btntype="key">1</td>
+  <td class="mqeebtn" btntext="2" btntype="key">2</td>
+  <td class="mqeebtn" btntext="3" btntype="key">3</td>
+  <td class="mqeebtn" btntext="-" btntype="key">-</td>
+  <td class="mqeebtn" btntext="t" btntype="key"><i>t</i></td>
+</tr>
+<tr>
+  <td class="mqeebtn" btntext="0" btntype="key">0</td>
+  <td class="mqeebtn" btntext="." btntype="key">.</td>
+  <td class="mqeebtn" btntext="=" btntype="key">=</td>
+  <td class="mqeebtn" btntext="+" btntype="key">+</td>
+  <td class="mqeebtn" btntext="f" btntype="key"><i>f</i></td>
+</tr>
+</table>
+</div>
+<div style="clear:both"></div>
+</div>
+</div>

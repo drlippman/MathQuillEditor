@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=624">
+
+<title>MathQuill Demo</title>
+
+<link rel="stylesheet" type="text/css" href="support/home.css">
+<link rel="stylesheet" type="text/css" href="mathquill.css">
+
+<style type="text/css">
+code span {
+  font: 90% Verdana, sans-serif;
+}
+#codecogsimg {
+  vertical-align: middle;
+  border: none;
+}
+.mathquill-text-field {
+  width: 100%;
+}
+#html-source {
+  display: none;
+  font-size: 90%;
+  white-space: pre-wrap;
+}
+.mq-math-mode .mq-editable-field {
+  min-width: 1cm;
+}
+</style>
+
+</head>
+<body>
+<div id="body">
+
+<a href="http://github.com/laughinghan/mathquill"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub!"></a>
+
+<h1><a href="http://mathquill.github.com">MathQuill</a> Demo <small>local test page</small></h1>
+
+<p>Math textbox with initial LaTeX: <span class="mathquill-math-field">\frac{d}{dx}\sqrt{x}=</span></p>
+
+<p>Math textbox with initial LaTeX: <span class="mathquill-math-field">\frac{d}{dx}\sqrt{3x}=</span></p>
+
+<p>Math textbox with initial LaTeX: <span class="mathquill-math-field">\frac{d}{dx}\sqrt{5x}=</span></p>
+
+</div>
+<script type="text/javascript" src="support/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="mathquill.js"></script>
+<script type="text/javascript">
+MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
+MQ.config({
+  spaceBehavesLikeTab: true,
+  charsThatBreakOutOfSupSub: '=<>',
+  autoCommands: 'pi theta sqrt sum int oo',
+  autoFunctionize: 'sin cos tan sec csc cot log ln',
+  addCommands: {'oo':['VanillaSymbol','\\infty ','&infin;']},
+  keyboardPassthrough: true,
+  substituteTextarea: function() {
+       return $("<span tabindex=0/>")[0];
+  }
+});
+//on document ready, mathquill-ify all `<tag class="mathquill-*">latex</tag>`
+//elements according to their CSS class.
+$(function() {
+  $('.mathquill-math-field').each(function() { MQ.MathField(this); });
+});
+
+</script>
+</body>
+</html>
