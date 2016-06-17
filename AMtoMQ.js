@@ -133,6 +133,8 @@ var AMQsymbols = [
 {input:"+-",   tag:"mo", output:"\u00B1", tex:"pm", ttype:CONST},
 {input:"O/",   tag:"mo", output:"\u2205", tex:"emptyset", ttype:CONST},
 {input:"oo",   tag:"mo", output:"\u221E", tex:"infty", ttype:CONST},
+{input:"rarr", tag:"mo", output:"\u2192", tex:"rightarrow", ttype:CONST},
+{input:"->",   tag:"mo", output:"\u2192", tex:"to", ttype:CONST},
 //{input:"CC",  tag:"mo", output:"\u2102", tex:"mathbb{C}", ttype:CONST, notexcopy:true},
 //{input:"NN",  tag:"mo", output:"\u2115", tex:"mathbb{N}", ttype:CONST, notexcopy:true},
 //{input:"QQ",  tag:"mo", output:"\u211A", tex:"mathbb{Q}", ttype:CONST, notexcopy:true},
@@ -756,7 +758,7 @@ function MQtoAM(tex,display) {
 	tex = tex.replace(/\\le(?!f)/g,'<=');
 	tex = tex.replace(/\\ge/g,'>=');
 	tex = tex.replace(/\\approx/g,'~~');
-	tex = tex.replace(/\\arrow/g,'rarr');
+	tex = tex.replace(/(\\arrow|\\rightarrow)/g,'rarr');
 	tex = tex.replace(/\\cup/g,'U');
 	tex = tex.replace(/\\left/g,'');
 	tex = tex.replace(/\\right/g,'');
