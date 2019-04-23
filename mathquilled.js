@@ -183,6 +183,7 @@ function mqeeinsert(e) {
 		mqarea.typedText(t);
 	} else if (type=='func') { //function
 		var sel = mqarea.getSelection();
+		console.log(sel);
 		if (sel) {
 			mqarea.write(t+'\\left('+sel+'\\right)');
 		} else {
@@ -193,6 +194,7 @@ function mqeeinsert(e) {
 		var leftbrack = t.charAt(0);
 		var rightbrack = t.charAt(1);
 		var sel = mqarea.getSelection();
+		console.log(sel);
 		if (sel) {
 			mqarea.write('\\left'+leftbrack+sel+'\\right'+rightbrack);
 		} else {
@@ -201,6 +203,7 @@ function mqeeinsert(e) {
 		}
 	} else if (type=='sfunc') {  //simplefunction
 		var sel = mqarea.getSelection();
+		console.log(sel);
 		if (sel) {
 			mqarea.write(t+'{'+sel+'}');
 		} else {

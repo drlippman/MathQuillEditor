@@ -8,6 +8,7 @@ $(function() {
 	MQ.config({
 	  spaceBehavesLikeTab: true,
 	  charsThatBreakOutOfSupSub: '=<>',
+	  autoParenOperators: true,
 	  autoCommands: 'pi theta sqrt sum int oo',
 	  //autoFunctionize: 'sin cos tan sec csc cot log ln',
 	  addCommands: {'oo':['VanillaSymbol','\\infty ','&infin;']}
