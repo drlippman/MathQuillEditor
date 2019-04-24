@@ -1,0 +1,26 @@
+Design plan:
+
+Encapsulate the editor builder into an object MQeditor.
+
+MQeditor.MQconfig(config)
+  Sets config object to use when creating MQ elements
+
+MQeditor.toggleMQ(element, [state])
+  converts the given input element to/from a MQ entry
+  calls attach to set listener
+  Sets onedit handler to convert back to AM and store
+
+MQeditor.toggleAll([state])
+  converts all the inputs on the page to/from a MQ entry
+
+MQeditor.attach(element)
+  Sets onfocus/onblur listeners calling showEditor
+
+MQeditor.showEditor(element, layoutstyle, layout)
+  Shows the editor for the given mathquill element.
+  layoutstyle: "under" for under entry box, or "OSK" for fixed on-screen-keyboard
+  If it's a new element, build the panel suing the provided layout.
+  Otherwise just reveal panel.
+
+MQeditor.hideEditor(element)
+  Hides the editor panel
