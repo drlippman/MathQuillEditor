@@ -1117,11 +1117,21 @@ function getInterface(v) {
     _.matrixCmd = function(cmd) {
       var ctrlr = this.__controller.notify(), cursor = ctrlr.cursor;
       if (cursor.parent.parent instanceof Environment) {
-        cursor.parent.parent.insert(cmd, cursor.parent);
+        if (cmd.match(/add/)) {
+          cursor.parent.parent.insert(cmd, cursor.parent);
+        } else {
+          cursor.parent.parent.remove(cmd, cursor.parent);
+        }
       }
       return this;
     };
-
+    _.getSelection = function() {
+      if (this.__controller.cursor.selection) {
+        return this.__controller.cursor.selection.join('latex');
+      } else {
+        return null;
+      }
+    };
     _.moveToDirEnd = function(dir) {
       this.__controller.notify('move').cursor.insAtDirEnd(dir, this.__controller.root);
       return this;
@@ -2051,9 +2061,11 @@ Controller.open(function(_) {
         cursor.show();
     }).blur(function() {
       ctrlr.blurred = true;
-      root.postOrder('intentionalBlur');
-      if (cursor.selection) cursor.selection.jQ.addClass('mq-blur');
-      blur();
+      blurTimeout = setTimeout(function() {
+        root.postOrder('intentionalBlur');
+        if (cursor.selection) cursor.selection.jQ.addClass('mq-blur');
+        blur();
+      },100);
     });
     function blur() { // not directly in the textarea blur handler so as to be
       cursor.hide().parent.blur(); // synchronous with/in the same frame as
@@ -5756,6 +5768,79 @@ Environments.matrix = P(Environment, function(_, super_) {
     }
     this.finalizeTree();
   };
+  _.deleteRow = function(currentCell) {
+    var rows = [], columns = [], myRow = [], myColumn = [];
+    var blocks = this.blocks, row, column;
+
+    // Create arrays for cells in the current row / column
+    this.eachChild(function (cell) {
+      if (row !== cell.row) {
+        row = cell.row;
+        rows[row] = [];
+        column = 0;
+      }
+      columns[column] = columns[column] || [];
+      columns[column].push(cell);
+      rows[row].push(cell);
+
+      if (cell === currentCell) {
+        myRow = rows[row];
+        myColumn = columns[column];
+      }
+
+      column+=1;
+    });
+
+    function remove(cells) {
+      for (var i=0; i<cells.length; i+=1) {
+        if (blocks.indexOf(cells[i]) > -1) {
+          cells[i].remove();
+          blocks.splice(blocks.indexOf(cells[i]), 1);
+        }
+      }
+    }
+    if (myColumn.length > 1) {
+      remove(myRow);
+      this.jQ.find('tr').eq(row).remove();
+    }
+    this.finalizeTree();
+  };
+  _.deleteColumn = function(currentCell) {
+    var rows = [], columns = [], myRow = [], myColumn = [];
+    var blocks = this.blocks, row, column;
+
+    // Create arrays for cells in the current row / column
+    this.eachChild(function (cell) {
+      if (row !== cell.row) {
+        row = cell.row;
+        rows[row] = [];
+        column = 0;
+      }
+      columns[column] = columns[column] || [];
+      columns[column].push(cell);
+      rows[row].push(cell);
+
+      if (cell === currentCell) {
+        myRow = rows[row];
+        myColumn = columns[column];
+      }
+
+      column+=1;
+    });
+
+    function remove(cells) {
+      for (var i=0; i<cells.length; i+=1) {
+        if (blocks.indexOf(cells[i]) > -1) {
+          cells[i].remove();
+          blocks.splice(blocks.indexOf(cells[i]), 1);
+        }
+      }
+    }
+    if (myRow.length > 1) {
+      remove(myColumn);
+    }
+    this.finalizeTree();
+  };
   _.addRow = function(afterCell) {
     var previous = [], newCells = [], next = [];
     var newRow = $('<tr></tr>'), row = afterCell.row;
@@ -5831,6 +5916,12 @@ Environments.matrix = P(Environment, function(_, super_) {
     this.cursor = this.cursor || this.parent.cursor;
     this.finalizeTree();
     this.bubble('reflow').cursor.insAtRightEnd(cellToFocus);
+  };
+  _.remove = function(method, afterCell) {
+    var cellToFocus = this[method](afterCell);
+    this.cursor = this.cursor || this.parent.cursor;
+    this.finalizeTree();
+    this.bubble('reflow');
   };
   _.backspace = function(cell, dir, cursor, finalDeleteCallback) {
     var dirwards = cell[dir];

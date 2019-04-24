@@ -32,6 +32,9 @@
       display: inline-block;
       text-align: center;
     }
+    .mqed-subpanel .mqed-btn-cont {
+      height: 38.5px;
+    }
 
     .mqed-btn-cont > span {
     	display: flex;
@@ -111,12 +114,16 @@
 <div id="mqeditor" class="mqeditor">
 </div>
 <script type="text/javascript">
+
+// TODO:
+// Add matrix function subpanel
+// Add option for variables subpanel
+
 // c: command k keystroke, c cmd, t typetext, w write
 //     default k for 'b' label, w for 'w' label
 var layout = [ //array of rows
   [ //array of columns
-    {'b':'x'},
-    {'b':'y'},
+    {'vars': ['x','y','z']},
     {'l':'\\left(\\right)', 'c':'t', 'w':'('},
     {'l':'x^{}', 'c':'t', 'w':'^'},
     {'s':.25},
@@ -131,28 +138,28 @@ var layout = [ //array of rows
   [
     {'p':'Funcs', 's':2, 'panel': [
       [
-        {'l':'\\log'},
-        {'l':'\\ln'},
-        {'l':'\\log_{}', 'c':'t', 'w':'log_'},
+        {'l':'\\log', 'c':'f'},
+        {'l':'\\ln', 'c':'f'},
+        {'l':'\\log_{}', 'c':'f'},
         {'l':'e^{}', 'c':'t', 'w':'e^'},
         {'s':1},
         {'s':1}
       ],
       [
-        {'l':'\\sin'},
-        {'l':'\\cos'},
-        {'l':'\\tan'},
-        {'l':'\\sec'},
-        {'l':'\\csc'},
-        {'l':'\\cot'}
+        {'l':'\\sin', 'c':'f'},
+        {'l':'\\cos', 'c':'f'},
+        {'l':'\\tan', 'c':'f'},
+        {'l':'\\sec', 'c':'f'},
+        {'l':'\\csc', 'c':'f'},
+        {'l':'\\cot', 'c':'f'}
       ],
       [
-        {'l':'\\sin^{-1}', 'c':'w', 'w':'\\sin^{-1}'},
-        {'l':'\\cos^{-1}', 'c':'w', 'w':'\\cos^{-1}'},
-        {'l':'\\tan^{-1}', 'c':'w', 'w':'\\tan^{-1}'},
-        {'l':'\\sinh'},
-        {'l':'\\cosh'},
-        {'l':'\\tanh'}
+        {'l':'\\sin^{-1}', 'c':'f'},
+        {'l':'\\cos^{-1}', 'c':'f'},
+        {'l':'\\tan^{-1}', 'c':'f'},
+        {'l':'\\sinh', 'c':'f'},
+        {'l':'\\cosh', 'c':'f'},
+        {'l':'\\tanh', 'c':'f'}
       ]
     ]},
     {'l':'\\pi'},
@@ -164,10 +171,30 @@ var layout = [ //array of rows
     {'b':'*'},
     {'s':.25},
     {'b':'&larr;', 'c':'k', 'w':'Left'},
-    {'b':'&rarr;', 'c':'k', 'w':'Right'},
+    {'b':'&rarr;', 'c':'k', 'w':'Right'}
   ],
   [
-    {'b':'&lt; [)', 's':2, 'panel': []},
+    {'b':'&le;', 's':2, 'panel': [
+      [
+        {'l':'\\lt'},
+        {'l':'\\gt'},
+        {'l':'\\le'},
+        {'l':'\\ge'},
+        {'p':'or'},
+        {'p':'DNE', 'sm':1},
+        {'p':'all reals', 'c':'w', 'w':'\\text{all reals}', 's':2}
+      ],
+      [
+        {'l':'\\left(\\right)', 'c':'i', 'w':'()'},
+        {'l':'\\left[\\right]', 'c':'i', 'w':'[]'},
+        {'l':'\\left(\\right]', 'c':'i', 'w':'(]'},
+        {'l':'\\left[\\right)', 'c':'i', 'w':'[)'},
+        {'l':'\\infty'},
+        {'l':'-\\infty', 'c':'w'},
+        {'l':'\\cup'},
+        {'s':1}
+      ]
+    ]},
     {'l':'\\infty'},
     {'l':'\\sqrt[n]{}', 'c':'c', 'w':'nthroot'},
     {'s':.25},
@@ -180,7 +207,31 @@ var layout = [ //array of rows
     {'s':.5}
   ],
   [
-    {'p':'ABC', 's':2, 'panel': []},
+    {'p':'ABC', 's':2, 'left': 0, 'panel': [
+      [
+        {'p':'q'},{'p':'w'},{'p':'e'},{'p':'r'},{'p':'t'},
+        {'p':'y'},{'p':'u'},{'p':'i'},{'p':'o'},{'p':'p'}
+      ],
+      [
+        {'s':.5},{'p':'a'},{'p':'s'},{'p':'d'},{'p':'f'},{'p':'g'},
+        {'p':'h'},{'p':'j'},{'p':'k'},{'p':'o'},{'s':.5}
+      ],
+      [
+        {'b':'&uarr;', 'c':'shift', 's':1.5},
+        {'p':'z'},{'p':'x'},{'p':'c'},{'p':'v'},{'p':'b'},
+        {'p':'n'},{'p':'m'},
+        {'b':'&#x232B;', 'c':'k', 'w':'Backspace', 's':1.5}
+      ],
+      [
+        {'s':2},
+        {'l':'\\left[\\right]', 'c':'i', 'w':'[]'},
+        {'l':'\\langle{}', 'c':'c', 'w':'\\langle'},
+        {'p':'%'},
+        {'p':','},
+        {'b':'&larr;', 'c':'k', 'w':'Left'},
+        {'b':'&rarr;', 'c':'k', 'w':'Right'}
+      ]
+    ]},
     {'p':'DNE', 'sm':1},
     {'l':'\\left|\\right|', 'c':'t', 'w':'|'},
     {'s':.25},
@@ -193,6 +244,81 @@ var layout = [ //array of rows
     {'s':.5}
   ]
 ];
+var layout2 = [
+  [
+    {'p':'Funcs', 's':2, 'left':100*2/9.25, 'panel': [
+      [
+        {'l':'\\log', 'c':'f'},
+        {'l':'\\ln', 'c':'f'},
+        {'l':'\\log_{}', 'c':'f'},
+        {'l':'e^{}', 'c':'t', 'w':'e^'},
+        {'s':1},
+        {'s':1}
+      ],
+      [
+        {'l':'\\sin', 'c':'f', sm:1},
+        {'l':'\\cos', 'c':'f', sm:1},
+        {'l':'\\tan', 'c':'f', sm:1},
+        {'l':'\\sec', 'c':'f', sm:1},
+        {'l':'\\csc', 'c':'f', sm:1},
+        {'l':'\\cot', 'c':'f', sm:1}
+      ],
+      [
+        {'l':'\\sin^{-1}', 'c':'f', sm:1},
+        {'l':'\\cos^{-1}', 'c':'f', sm:1},
+        {'l':'\\tan^{-1}', 'c':'f', sm:1},
+        {'l':'\\sinh', 'c':'f', sm:1},
+        {'l':'\\cosh', 'c':'f', sm:1},
+        {'l':'\\tanh', 'c':'f', sm:1}
+      ]
+    ]},
+    {'l':'\\frac{}{}', 'c':'t', 'w':'/'},
+    {'l':'x^{}', 'c':'t', 'w':'^'},
+    {'l':'x_{}', 'c':'t', 'w':'_'},
+    {'l':'\\sqrt{}', 'c':'c', 'w':'sqrt'},
+    {'l':'\\sqrt[n]{}', 'c':'c', 'w':'nthroot'},
+    {'s':.25},
+    {'b':'&uarr;', 'c':'k', 'w':'Up'},
+    {'b':'&darr;', 'c':'k', 'w':'Down'},
+  ],
+  [
+    {'b':'&le;', 's':2, 'left':100*2/9.25, 'panel': [
+      [
+        {'l':'\\lt'},
+        {'l':'\\gt'},
+        {'l':'\\le'},
+        {'l':'\\ge'},
+        {'p':'or'},
+      ],
+      [
+        {'l':'\\left(\\right)', 'c':'i', 'w':'()'},
+        {'l':'\\left[\\right]', 'c':'i', 'w':'[]'},
+        {'l':'\\left(\\right]', 'c':'i', 'w':'(]'},
+        {'l':'\\left[\\right)', 'c':'i', 'w':'[)'},
+        {'l':'\\cup'},
+      ],
+      [
+        {'l':'\\infty'},
+        {'l':'-\\infty', 'c':'w'},
+        {'p':'DNE', 'sm':1},
+        {'p':'all reals', 'c':'w', 'w':'\\text{all reals}', 's':2}
+      ]
+    ]},
+    {'l':'\\left|\\right|', 'c':'t', 'w':'|'},
+    {'l':'\\left(\\right)', 'c':'t', 'w':'('},
+    {'l':'\\pi'},
+    {'l':'\\infty'},
+    {'p':'DNE', 'sm':1},
+    {'s':.25},
+    {'b':'&larr;', 'c':'k', 'w':'Left'},
+    {'b':'&rarr;', 'c':'k', 'w':'Right'}
+  ],
+  [
+    {'s':7.25},
+    {'b':'&#x232B;', 's':2, 'c':'k', 'w':'Backspace'}
+  ]
+
+]
 MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
 MQ.config({
   handlers: {
@@ -211,13 +337,38 @@ function onMQedit() {
 }
 
 function buildPanel(baseel, layoutarr) {
-  var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel;
+  var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel,nr,nc,cnt;
   for (r=0;r<layoutarr.length;r++) {
     rowel = document.createElement("div");
     rowel.className = 'row';
     row = layoutarr[r];
     for (c=0;c<row.length;c++) {
       btn = row[c];
+      if (btn.hasOwnProperty('vars')) {
+        if (btn.vars.length<3 &&
+          btn.vars[0].length<3 &&
+          btn.vars[1].length<3) {
+          //put them as regular buttons.
+          layoutarr[r].splice(c,1,{'b':btn.vars[0]},{'b':btn.vars[1]});
+          btn = {'b':btn.vars[0]};
+        } else {
+          var perrow = Math.min(row.length-2,Math.max(4, Math.ceil(btn.vars.length/4)));
+          var subarr = [];
+          var cnt=0;
+          for (nr=0;nr<Math.ceil(btn.vars.length/perrow);nr++) {
+            subarr[nr] = [];
+            for (nc=0;nc<perrow;nc++) {
+              if (cnt<btn.vars.length) {
+                subarr[nr][nc] = {'b':btn.vars[cnt]};
+              } else {
+                subarr[nr][nc] = {'s':1};
+              }
+              cnt++;
+            }
+          }
+          btn = {'p':'Vars', 's':2, 'panel':subarr.slice()};
+        }
+      }
       btncont = document.createElement("div");
       btncont.className = "mqed-btn-cont";
       if (btn.hasOwnProperty('s')) {
@@ -247,11 +398,14 @@ function buildPanel(baseel, layoutarr) {
         cmdtype = 't';
         cmdval = btn.p;
       }
-      if (btn.hasOwnProperty('sm')) {
-        btnel.style.fontSize='70%';
-      }
       if (btn.hasOwnProperty('c')) {
         cmdtype = btn.c;
+        if (cmdtype == 'shift') {
+          $(btnel).addClass("mqed-shift");
+        }
+      }
+      if (btn.hasOwnProperty('sm')) {
+        btnel.style.fontSize=(cmdtype=='f'?'90%':'70%');
       }
       if (btn.hasOwnProperty('w')) {
         cmdval = btn.w;
@@ -259,9 +413,17 @@ function buildPanel(baseel, layoutarr) {
       if (btn.hasOwnProperty('panel')) {
         subpanel = document.createElement("div");
         subpanel.id = baseel.id + '-sub-'+r+'-'+c;
-        subpanel.style.display = "none";
-        subpanel.style.left = (100*2.1/row.length) + '%';
-        subpanel.className = "mqed-subpanel"
+        if (btn.hasOwnProperty('left')) {
+          subpanel.style.left = btn.left + '%';
+          btnel.style.zIndex = 200;
+        } else {
+          subpanel.style.left = (100*2.1/row.length) + '%';
+        }
+        if (btn.hasOwnProperty('right')) {
+          subpanel.style.right = btn.right + '%';
+        }
+        //subpanel.style.display = "none";
+        subpanel.className = "mqed-subpanel";
         buildPanel(subpanel, btn.panel);
         baseel.appendChild(subpanel);
         cmdtype = 'showpanel';
@@ -274,13 +436,14 @@ function buildPanel(baseel, layoutarr) {
     }
     baseel.appendChild(rowel);
   }
-  $(baseel).find(".mqed-btn.rend").each(function() {MQ.StaticMath(this); });
 }
 
 function go() {
   console.log("go");
   document.getElementById("mqeditor").innerHTML = '';
-  buildPanel(document.getElementById("mqeditor"), layout);
+  buildPanel(document.getElementById("mqeditor"), layout2);
+  $("#mqeditor .mqed-btn.rend").each(function() {MQ.StaticMath(this, {mouseEvents: false}); });
+  $("#mqeditor .mqed-subpanel").hide();
 }
 function makeBtnListener(cmdtype, cmdval) {
   return function (event) {
@@ -294,8 +457,14 @@ function handleMQbtn(event, cmdtype, cmdval) {
   if (event.type=='touchstart') {
     event.preventDefault();
   }
+  console.log(cmdtype+","+cmdval);
   // c: command k keystroke, c cmd, t typetext, w write
   if (cmdtype == 't') {
+    if (cmdval.match(/^[a-zA-Z]$/)) {
+      if ($(event.target).closest('.mqed-subpanel').find(".mqed-shift").hasClass("active")) {
+        cmdval = cmdval.toUpperCase();
+      }
+    }
     curMQfield.typedText(cmdval);
   } else if (cmdtype == 'c') {
     curMQfield.cmd(cmdval);
@@ -303,17 +472,69 @@ function handleMQbtn(event, cmdtype, cmdval) {
     curMQfield.write(cmdval);
   } else if (cmdtype=='k') {
     curMQfield.keystroke(cmdval);
+  } else if (cmdtype=='f') {
+		var sel = curMQfield.getSelection();
+		if (sel) {
+			curMQfield.write(cmdval+'\\left('+sel+'\\right)');
+      curMQfield.keystroke('Left');
+		} else if (cmdval.match(/{}$/)) {
+      curMQfield.typedText(cmdval.replace(/{}$/,''));
+    } else {
+		  curMQfield.write(cmdval);
+		}
+  } else if (cmdtype=='sf') {
+		var sel = curMQfield.getSelection();
+		if (sel) {
+			curMQfield.write(cmdval+'{'+sel+'}');
+		} else {
+		  curMQfield.cmd(cmdval);
+		}
+		curMQfield.keystroke('Left');
+  } else if (cmdtype=='i') {
+		var sel = curMQfield.getSelection();
+    if (!sel) {
+      sel = '';
+    }
+    var leftsym = cmdval.charAt(0);
+    var rightsym = cmdval.charAt(1);
+		curMQfield.write('\\left'+leftsym+sel+'\\right'+rightsym);
+    if (sel=='') {
+      curMQfield.keystroke('Left');
+    }
   } else if (cmdtype=='showpanel') {
     var subpanel = document.getElementById(cmdval);
     var target = $(event.target).closest('.mqed-btn');
     if (subpanel.style.display == 'none') { // show it
+      // first hide any already-showing subpanels
+      target.closest(".mqeditor").find(".mqed-subpanel").hide();
+      target.closest(".mqeditor").find(".mqed-btn.active").removeClass("active");
+
       target.addClass("active");
       //var pos = target.position().left + target.width() + 3;
-      $(subpanel).show();//css('left', pos+"px").show();
+      $(subpanel).show();
     } else { //hide it
       target.removeClass("active");
       $(subpanel).hide();
     }
+  } else if (cmdtype=='shift') {
+    var target = $(event.target).closest('.mqed-btn');
+    var subpanel = $(event.target).closest('.mqed-subpanel');
+    var goingActive = !target.hasClass("active");
+    if (goingActive) {
+      target.addClass("active");
+    } else {
+      target.removeClass("active");
+    }
+    subpanel.find(".mqed-btn").each(function(i,el) {
+      var txt = el.textContent;
+      if (txt.match(/^[a-zA-Z]$/)) {
+        if (goingActive) {
+          el.textContent = el.textContent.toUpperCase();
+        } else {
+          el.textContent = el.textContent.toLowerCase();
+        }
+      }
+    })
   }
   curMQfield.focus();
 }
