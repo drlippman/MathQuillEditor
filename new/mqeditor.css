@@ -1,0 +1,117 @@
+.mqeditor {
+  position: absolute;
+  font-size: 18px;
+  width: 400px;
+  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
+  background-color: #fafafa;
+  border: 1px solid #ccc;
+}
+.mqeditor.fixedbottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.4);
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+.mqeditor .mqed-subpanel {
+  padding: 3px;
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background-color: #f6f6f6;
+  z-index: 10;
+  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
+  border-radius: 4px;
+}
+.mqed-row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+.mqed-btn-cont {
+  flex-grow: 1;
+  position: relative;
+  height: 40px;
+  display: inline-block;
+  text-align: center;
+}
+.mqed-subpanel .mqed-btn-cont {
+  height: 38.5px;
+}
+.mqed-btn {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 2px;
+  bottom: 2px;
+  border: 1px solid #ccc;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.mqed-btn:hover {
+  background-color: #eee;
+}
+.mqed-btn:active, .mqed-btn.active {
+  background-color: #eef;
+}
+.mqed-btn .mq-root-block {
+  padding: 0;
+}
+.mqed-btn.mq-math-mode {
+  font-size: 100%;
+}
+
+/* Get the empty boxes to look decent */
+.mqed-btn .mq-empty {
+  background-color: inherit;
+}
+.mqed-btn .mq-sqrt-stem.mq-empty {
+  width: 3px;
+}
+.mqed-btn .mq-sup.mq-empty, .mqed-btn .mq-sub.mq-empty {
+  border: 1px solid #ccc;
+  height: 12px;
+  width: 8px;
+  margin-bottom: 0px !important;
+}
+.mqed-btn .mq-paren + .mq-empty {
+  width: 8px;
+  height: 18px;
+}
+.mqed-btn .mq-paren + .mq-empty::after {
+  visibility: visible;
+  display: inline-block;
+  content: " ";
+  border: 1px solid #ccc;
+  width: 6px;
+  height: 12px;
+  margin-top:2px;
+}
+.mqed-btn .mq-numerator.mq-empty, .mqed-btn .mq-denominator.mq-empty {
+  height: 14px;
+}
+.mqed-btn .mq-numerator.mq-empty {
+  height: 12px;
+  margin-bottom: 2px;
+}
+.mqed-btn .mq-denominator.mq-empty::after,
+.mqed-btn .mq-numerator.mq-empty::after {
+  visibility: visible;
+  display: inline-block;
+  content: " ";
+  border: 1px solid #ccc;
+  width: 6px;
+  height: 10px;
+}
