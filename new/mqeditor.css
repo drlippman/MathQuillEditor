@@ -63,8 +63,11 @@
 .mqed-btn:hover {
   background-color: #eee;
 }
-.mqed-btn:active, .mqed-btn.active {
+.mqed-btn:active, .mqed-btn.mactive, .mqed-btn.active {
   background-color: #eef;
+}
+.mqed-btn.mactive {
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
 .mqed-btn .mq-root-block {
   padding: 0;

@@ -95,7 +95,7 @@ var myMQeditor = (function($) {
           {b:'&rarr;', c:'k', w:'Right'}
         ]
       ]},
-      {p:'DNE', 'sm':1},
+      {p:'DNE', 'sm':2},
       {l:'\\left|\\right|', c:'t', w:'|'},
       {s:.25},
       {b:'0'},
@@ -116,7 +116,7 @@ var myMQeditor = (function($) {
     ],
     [
       {p:'or'},
-      {p:'DNE', 'sm':1},
+      {p:'DNE', 'sm':2},
       {p:'all reals', c:'w', w:'\\text{all reals}', s:2}
     ]
   ]};
@@ -209,7 +209,6 @@ var myMQeditor = (function($) {
         } else {
           baselayout[2][0] = intervalPanel;
         }
-        baselayout[2][0].left = 100*2/10.5;
       }
     } else { // under layout
       baselayout = underLayout.slice();
@@ -219,7 +218,6 @@ var myMQeditor = (function($) {
         } else {
           baselayout[1][0] = intervalPanel;
         }
-        baselayout[1][0].left = 100*2/9.25;
       }
     }
     return baselayout;

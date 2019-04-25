@@ -93,7 +93,7 @@ var MQeditor = (function($) {
           };
           thisMQconfig.keyboardPassthrough = true;
         }
-        mqfield = MQ.MathField(span[0], MQconfig).config(thisMQconfig);
+        mqfield = MQ.MathField(span[0], thisMQconfig).config(MQconfig);
         attachEditor(span);
 
       } else { // has existing MQ input
@@ -147,6 +147,7 @@ var MQeditor = (function($) {
       $("#mqeditor").on("mousedown touchstart", function(evt) {evt.preventDefault();});
     }
     // update layoutStyle if needed
+    var lastlayoutstyle = config.curlayoutstyle;
     if (config.hasOwnProperty("getLayoutstyle")) {
       config.curlayoutstyle = config.getLayoutstyle();
     } else if (config.layoutstyle == 'auto') {
@@ -160,7 +161,9 @@ var MQeditor = (function($) {
       $("#mqeditor").removeClass("fixedbottom");
     }
     // see if the field has changed
-    if (curMQfield === null || mqel[0] != curMQfield.el()) {
+    if (curMQfield === null || mqel[0] != curMQfield.el() ||
+      lastlayoutstyle !== config.curlayoutstyle
+    ) {
       // new field; need to build the panel
       // update the layout based on the element
       if (config.hasOwnProperty("getLayout")) {
@@ -175,7 +178,11 @@ var MQeditor = (function($) {
       $("#mqeditor .mqed-subpanel").hide();
     }
     // now show and position the editor
-    $("#mqeditor").show();
+    if (config.curlayoutstyle === 'OSK') {
+      $("#mqeditor").slideDown(50);
+    } else {
+      $("#mqeditor").show();
+    }
     positionEditor(mqel);
     curMQfield = MQ.MathField(mqel[0]);
   }
@@ -184,7 +191,11 @@ var MQeditor = (function($) {
     Hide the editor
    */
   function hideEditor(event) {
-    $("#mqeditor").hide();
+    if (config.curlayoutstyle === 'OSK') {
+      $("#mqeditor").slideUp(50);
+    } else {
+      $("#mqeditor").hide();
+    }
   }
 
   /*
@@ -200,8 +211,9 @@ var MQeditor = (function($) {
       if (editorLeft + editorWidth > document.documentElement.clientWidth) {
         editorLeft = document.documentElement.clientWidth - editorWidth-5;
       }
-      // TODO: adjust left if
     	$("#mqeditor").css("top", offset.top + height + 3).css("left", editorLeft);
+    } else {
+      $("#mqeditor").css("top", "auto").css("left", 0);
     }
   }
   /*
@@ -315,7 +327,8 @@ var MQeditor = (function($) {
           cmdval = subpanel.id;
         }
         $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
-        $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval));
+        $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
+          .on("touchend", function(evt) { $(evt.currentTarget).removeClass("mactive"); });
         btncont.appendChild(btnel);
       }
       baseel.appendChild(rowel);
@@ -340,7 +353,10 @@ var MQeditor = (function($) {
     }
     if (event.type=='touchstart') {
       event.preventDefault();
+      $(event.currentTarget).addClass("mactive");
     }
+
+
     // return focus to editor
     //clearTimeout(blurTimer);
     //curMQfield.focus();
