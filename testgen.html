@@ -11,12 +11,12 @@
       padding: 3px;
       position: absolute;
       right: 0; top: 0; bottom: 0;
-      background-color: #eee;
+      background-color: #f6f6f6;
       z-index: 10;
+      box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
+      border-radius: 4px;
     }
-    .mqeditor .mq-math-mode {
-    	   font-size: 18px;
-    }
+
     .mqeditor .row {
       display: flex;
       flex-flow: row nowrap;
@@ -217,7 +217,7 @@ var layout = [ //array of rows
         {'p':'h'},{'p':'j'},{'p':'k'},{'p':'o'},{'s':.5}
       ],
       [
-        {'b':'&uarr;', 'c':'shift', 's':1.5},
+        {'b':'&#8679;', 'c':'shift', 's':1.5},
         {'p':'z'},{'p':'x'},{'p':'c'},{'p':'v'},{'p':'b'},
         {'p':'n'},{'p':'m'},
         {'b':'&#x232B;', 'c':'k', 'w':'Backspace', 's':1.5}
@@ -441,7 +441,7 @@ function buildPanel(baseel, layoutarr) {
 function go() {
   console.log("go");
   document.getElementById("mqeditor").innerHTML = '';
-  buildPanel(document.getElementById("mqeditor"), layout2);
+  buildPanel(document.getElementById("mqeditor"), layout);
   $("#mqeditor .mqed-btn.rend").each(function() {MQ.StaticMath(this, {mouseEvents: false}); });
   $("#mqeditor .mqed-subpanel").hide();
 }

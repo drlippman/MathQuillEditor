@@ -58,7 +58,7 @@ var MQeditor = (function($) {
     if (typeof el == 'string') {
       el = document.getElementById(el);
     }
-    var newstate = state || (el.type != 'hidden');
+    var newstate = (typeof state == 'boolean') ? state : (el.type != 'hidden');
     var textId = el.id;
     if (newstate === true) { // enable MQ
       var initval = $(el).attr("type","hidden").val();
@@ -72,7 +72,9 @@ var MQeditor = (function($) {
           class: "mathquill-math-field",
           text: initval
         });
-  			span.insertAfter(el);
+        span.css("min-width", (el.hasAttribute("size") ? el.size : 10) + "em");
+        span.insertAfter(el);
+  			
         var thisMQconfig = {
           handlers: {
             edit: onMQedit
@@ -115,7 +117,7 @@ var MQeditor = (function($) {
     state: (optional) true to toggle to MQ; false to regular input
    */
   function toggleMQAll(selector, state) {
-    var newstate = state || (el.type != 'hidden');
+    var newstate = state || null;
     $(selector).each(function(i,el) {
       toggleMQ(el, newstate, true);
     });
@@ -376,9 +378,19 @@ var MQeditor = (function($) {
     } else if (cmdtype=='w') {
       // do MQ write
       curMQfield.write(cmdval);
+      // if matrix, move cursor to first entry
+      if (m = cmdval.match(/bmatrix}(.*?)(\\\\|\\end{bm)/)) {
+        var len = m[1].split(/&/).length;
+        for (var i=0;i<len;i++) {
+          curMQfield.keystroke('Left');
+        }
+      }
     } else if (cmdtype=='k') {
       // do MQ keystroke
       curMQfield.keystroke(cmdval);
+    } else if (cmdtype=='m') {
+      // do MQ matrixCmd
+      curMQfield.matrixCmd(cmdval);
     } else if (cmdtype=='f') {
       // function; if there's a selection, wrap it in parens and apply function
   		var sel = curMQfield.getSelection();

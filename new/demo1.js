@@ -8,7 +8,7 @@ var myMQeditor = (function($) {
     [ //array of columns
       {s:2},
       {l:'\\left(\\right)', c:'t', w:'('},
-      {l:'x^{}', c:'t', w:'^'},
+      {l:'x^{}', c:'t', w:'^', nb:1},
       {s:.25},
       {b:'7'},
       {b:'8'},
@@ -19,7 +19,7 @@ var myMQeditor = (function($) {
       {s:.5}
     ],
     [ //row 1
-      {p:'Funcs', s:2, 'panel': [
+      {p:'Funcs', s:2, nb:1, 'panel': [
         [
           {l:'\\log', c:'f'},
           {l:'\\ln', c:'f'},
@@ -45,8 +45,8 @@ var myMQeditor = (function($) {
           {l:'\\tanh', c:'f'}
         ]
       ]},
-      {l:'\\pi'},
-      {l:'\\sqrt{}', c:'c', w:'sqrt'},
+      {l:'\\pi', nb:1},
+      {l:'\\sqrt{}', c:'c', w:'sqrt', nb:1},
       {s:.25},
       {b:'4'},
       {b:'5'},
@@ -59,7 +59,7 @@ var myMQeditor = (function($) {
     [ //row 2
       {s:2},
       {l:'\\infty'},
-      {l:'\\sqrt[n]{}', c:'c', w:'nthroot'},
+      {l:'\\sqrt[n]{}', c:'c', w:'nthroot', nb:1},
       {s:.25},
       {b:'1'},
       {b:'2'},
@@ -96,15 +96,14 @@ var myMQeditor = (function($) {
         ]
       ]},
       {p:'DNE', 'sm':2},
-      {l:'\\left|\\right|', c:'t', w:'|'},
+      {l:'\\left|\\right|', c:'t', w:'|', nb:1},
       {s:.25},
       {b:'0'},
       {b:'.'},
-      {b:'='},
+      {b:','},
       {b:'+'},
-      {s:.75},
-      {b:'&#x232B;', c:'k', w:'Backspace'},
-      {s:.5}
+      {s:.25},
+      {b:'&#x232B;', s:2, c:'k', w:'Backspace'},
     ]
   ];
   var ineqPanel = {b:'&le;', s:2, 'panel': [
@@ -134,9 +133,23 @@ var myMQeditor = (function($) {
       {s:1}
     ]
   ]};
+  var matrixPanel = {p:'Matrix', s: 2, sm: 1, panel: [
+    [
+      {p:'2×2', c:'w', w:'\\begin{bmatrix}&\\\\&\\end{bmatrix}'},
+      {p:'2×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\end{bmatrix}'},
+      {p:'3×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\\\&&\\end{bmatrix}'},
+      {p:'3×4', c:'w', w:'\\begin{bmatrix}&&&\\\\&&&\\\\&&&\\end{bmatrix}'}
+    ],
+    [
+      {p:'+Col', c:'m', w:'addColumn'},
+      {p:'-Col', c:'m', w:'deleteColumn'},
+      {p:'+Row', c:'m', w:'addRow'},
+      {p:'-Row', c:'m', w:'deleteRow'}
+    ]
+  ]};
   var underLayout = [
     [ //row 0
-      {p:'Funcs', s:2, 'panel': [
+      {p:'Funcs', s:2, nb:1, 'panel': [
         [
           {l:'\\log', c:'f'},
           {l:'\\ln', c:'f'},
@@ -163,19 +176,19 @@ var myMQeditor = (function($) {
         ]
       ]},
       {l:'\\frac{}{}', c:'t', w:'/'},
-      {l:'x^{}', c:'t', w:'^'},
-      {l:'x_{}', c:'t', w:'_'},
-      {l:'\\sqrt{}', c:'c', w:'sqrt'},
-      {l:'\\sqrt[n]{}', c:'c', w:'nthroot'},
+      {l:'x^{}', c:'t', w:'^', nb:1},
+      {l:'x_{}', c:'t', w:'_', nb:1},
+      {l:'\\sqrt{}', c:'c', w:'sqrt', nb:1},
+      {l:'\\sqrt[n]{}', c:'c', w:'nthroot', nb:1},
       {s:.25},
       {b:'&uarr;', c:'k', w:'Up'},
       {b:'&darr;', c:'k', w:'Down'},
     ],
     [ //row 1
       {s:2},
-      {l:'\\left|\\right|', c:'t', w:'|'},
+      {l:'\\left|\\right|', c:'t', w:'|', nb:1},
       {l:'\\left(\\right)', c:'t', w:'('},
-      {l:'\\pi'},
+      {l:'\\pi', nb:1},
       {l:'\\infty'},
       {p:'DNE', 'sm':2},
       {s:.25},
@@ -193,12 +206,14 @@ var myMQeditor = (function($) {
     var baseid = el.id.substring(8);
     var textel = $('#'+baseid);
     //TODO: fix this - need to get from params
-    var vars = ['x','y'];
-    var qtype = 'calcinterval';
-    var calcformat = 'inequality';
-    var baselayout;
+    var vars = textel.attr("data-mq-vars") || '';
+    vars = (vars=='') ? [] : vars.split(/,/);
+    var calcformat = textel.attr("data-mq");
+    var qtype = calcformat.split(/,/)[0];
+    var baselayout = [];
     if (layoutstyle === 'OSK') {
-      baselayout = mobileLayout.slice();
+      baselayout = $.extend(true, [], mobileLayout);
+      console.log(baselayout);
       if (vars.length > 0) {
         // replace spacer with vars buttons or panel control
         baselayout[0] = getVarsButtons(vars).concat(baselayout[0].slice(1));
@@ -209,14 +224,42 @@ var myMQeditor = (function($) {
         } else {
           baselayout[2][0] = intervalPanel;
         }
+      } else if (qtype=='calcmatrix') {
+        baselayout[2][0] = matrixPanel;
+      } else if (calcformat.match(/point/)) {
+        baselayout[2][0] = {l:'\\left(\\right)', s:2, c:'t', w:'('};
+      } else if (calcformat.match(/vector/)) {
+        baselayout[2][0] = {l:'\\langle{}', s:2, c:'c', w:'\\langle'};
+      }
+      if (calcformat.match(/(list|set)/) || qtype=='string') {
+        baselayout[3][6] = {'b':','};
+      } else if (calcformat.match(/equation/)) { // replace , with =
+        baselayout[3][6] = {'b':'='};
       }
     } else { // under layout
-      baselayout = underLayout.slice();
+      baselayout = $.extend(true, [], underLayout);
       if (qtype=='calcinterval') {
         if (calcformat.match(/inequality/)) {
           baselayout[1][0] = ineqPanel;
         } else {
           baselayout[1][0] = intervalPanel;
+        }
+      } else if (qtype=='calcmatrix') {
+        baselayout[1][0] = matrixPanel;
+      } else if (calcformat.match(/point/)) {
+        baselayout[1][0] = {l:'\\left(\\right)', s:2, c:'t', w:'('};
+      } else if (calcformat.match(/vector/)) {
+        baselayout[1][0] = {l:'\\langle{}', s:2, c:'c', w:'\\langle'};
+      }
+    }
+    if (calcformat.match(/(fraction|mixed)/)) { // elim non-basic btns
+      var r,c,sz;
+      for (r=0;r<baselayout.length;r++) {
+        for (c=0;c<baselayout[r].length;c++) {
+          if (baselayout[r][c].hasOwnProperty('nb')) {
+            sz = baselayout[r][c].s || 1;
+            baselayout[r][c] = {s:sz};
+          }
         }
       }
     }
@@ -235,14 +278,14 @@ var myMQeditor = (function($) {
         return [{'b':vars[0]},{'b':vars[1]}];
       }
     } else {
-      var perrow = Math.min(row.length-2,Math.max(4, Math.ceil(btn.vars.length/4)));
+      var perrow = Math.min(8,Math.max(4, Math.ceil(vars.length/4)));
       var subarr = [];
       var cnt=0;
-      for (nr=0;nr<Math.ceil(btn.vars.length/perrow);nr++) {
+      for (nr=0;nr<Math.ceil(vars.length/perrow);nr++) {
         subarr[nr] = [];
         for (nc=0;nc<perrow;nc++) {
-          if (cnt<btn.vars.length) {
-            subarr[nr][nc] = {'b':btn.vars[cnt]};
+          if (cnt<vars.length) {
+            subarr[nr][nc] = {'b':vars[cnt]};
           } else {
             subarr[nr][nc] = {'s':1};
           }
@@ -252,6 +295,7 @@ var myMQeditor = (function($) {
       return [{'p':'Vars', 's':2, 'panel':subarr.slice()}];
     }
   }
+
 
   return {
     getLayout: getLayout
@@ -272,7 +316,6 @@ var MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
 MQ.config({
   leftRightIntoCmdGoes: 'up',
   supSubsRequireOperand: true,
-  autoSubscriptNumerals: true,
   autoCommands: 'pi theta sqrt oo',
   autoParenOperators: true,
   addCommands: {'oo': ['VanillaSymbol', '\\infty ', '&infin;']},
@@ -280,7 +323,7 @@ MQ.config({
 
 // add button to toggle MQ on inputs
 $(function() {
-  $("input[type=text]").each(function(i,el) {
+  /*$("input[type=text]").each(function(i,el) {
     var btn = $("<button/>", {
       type:"button",
       text:"MQ",
@@ -290,4 +333,6 @@ $(function() {
     });
     $(this).after(btn);
   });
+  */
+ MQeditor.toggleMQAll("input");
 });
