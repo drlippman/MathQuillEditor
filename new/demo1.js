@@ -265,8 +265,13 @@ var myMQeditor = (function($) {
     }
     return baselayout;
   }
+  var greekletters = [''];
 
   function getVarsButtons(vars) {
+    for (var i=0; i<vars.length; i++) {
+      vars[i] = vars[i].replace(/alpha|beta|chi|delta|epsilon|gamma|varphi|phi|psi|sigma|rho|theta|lambda|mu|nu|omega|tau/i,
+        '\\$&');
+    }
     if (vars.length<3 &&
       vars[0].length<3 &&
       vars[1].length<3
@@ -285,7 +290,7 @@ var myMQeditor = (function($) {
         subarr[nr] = [];
         for (nc=0;nc<perrow;nc++) {
           if (cnt<vars.length) {
-            subarr[nr][nc] = {'b':vars[cnt]};
+            subarr[nr][nc] = {'b':vars[cnt], c:'w'};
           } else {
             subarr[nr][nc] = {'s':1};
           }
