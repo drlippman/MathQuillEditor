@@ -413,7 +413,7 @@ var myMQeditor = (function($) {
           ]
         };
       } else {
-        if (calcformat.match(/(list|set)/) || qtype=='string') {
+        if (calcformat.match(/(list|set)/) || qtype.match(/(interval|string|ntuple)/)) {
           baselayout.tabs[0].tabcontent[2].contents[14] = {'b':','};
         } else if (calcformat.match(/equation/)) { // replace , with =
           baselayout.tabs[0].tabcontent[2].contents[14] = {'b':'='};
