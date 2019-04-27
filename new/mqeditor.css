@@ -25,16 +25,27 @@
   box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
   border-radius: 4px;
 }
-.mqed-row {
+.mqed-row, .mqed-col {
   display: flex;
-  flex-flow: row nowrap;
   align-items: stretch;
   margin: 0;
   padding: 0;
   text-align: center;
 }
-.mqed-btn-cont {
+.mqed-row {
+  flex-flow: row nowrap;
+}
+.mqed-col {
+  flex-flow: column nowrap;
+  height: 100%;
+}
+.mqed-col .atend {
+  margin-top: auto;
+}
+.mqed-row > .mqed-btn-cont {
   flex-grow: 1;
+}
+.mqed-btn-cont {
   position: relative;
   height: 40px;
   display: inline-block;
@@ -59,16 +70,34 @@
   padding: 0;
   border-radius: 4px;
   cursor: pointer;
+  font-family: Symbola, "Times New Roman", serif;
 }
 .mqed-btn:hover {
   background-color: #eee;
 }
 .mqed-btn:active, .mqed-btn.mactive, .mqed-btn.active {
-
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
-.mqed-btn.mactive {
-
+.mqed-tab {
+  border: 0;
+  background-color: transparent;
+  color: #339;
+  border-radius: 0;
+  font-size: 90%;
+}
+.mqed-tab::after {
+  position: absolute;
+  right: 2px;
+  content: "\25b8"
+}
+.mqed-tab.active {
+  border-bottom: 2px solid #009;
+  color: #006;
+  background-color:
+  box-shadow: none;
+}
+.mqed-tab.active::after {
+  content: "\25c2"
 }
 .mqed-btn .mq-root-block {
   padding: 0;

@@ -74,7 +74,7 @@ var MQeditor = (function($) {
         });
         span.css("min-width", (el.hasAttribute("size") ? el.size : 10) + "em");
         span.insertAfter(el);
-  			
+
         var thisMQconfig = {
           handlers: {
             edit: onMQedit
@@ -174,7 +174,7 @@ var MQeditor = (function($) {
       // empty existing
       $("#mqeditor").empty().show();
       // build new panel
-      buildPanel(document.getElementById("mqeditor"), config.layout);
+      buildPanel2(document.getElementById("mqeditor"), config.layout, "mqeditor");
       // render buttons then hide subpanels
       $("#mqeditor .mqed-btn.rend").each(function() {MQ.StaticMath(this, {mouseEvents: false}); });
       $("#mqeditor .mqed-subpanel").hide();
@@ -253,6 +253,138 @@ var MQeditor = (function($) {
   /*
     Build the editor panel
   */
+  function buildPanel2(baseel, layoutarr, baseid) {
+    var flow = layoutarr.flow;
+    var maxsize = 100;
+    if (layoutarr.hasOwnProperty('s') && flow=='row') {
+      maxsize = layoutarr.s;
+    }
+    var wrapel = document.createElement("div");
+    if (layoutarr.hasOwnProperty('s')) {
+      wrapel.style.flexGrow = layoutarr.s;
+    }
+    if (layoutarr.hasOwnProperty('class')) {
+      wrapel.className = layoutarr.class;
+    }
+    var flowel = document.createElement("div");
+    flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
+
+    var curRowSize = 0;
+    var btn, btncont, subwrap;
+    var thisSize = 0;
+    for (var i=0; i < layoutarr.contents.length; i++) {
+      btn = layoutarr.contents[i];
+      if (btn.hasOwnProperty("flow") && btn.contents.length == 0) {
+        continue; // skip container if empty
+      }
+      if (btn.hasOwnProperty('s')) {
+        thisSize = btn.s;
+      } else {
+        thisSize = 1;
+      }
+      if (curRowSize + thisSize > maxsize) {
+        wrapel.appendChild(flowel);
+        curRowSize = 0;
+        var flowel = document.createElement("div");
+        flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
+      }
+      if (btn.hasOwnProperty("flow")) { //sub layout
+        buildPanel2(flowel, btn, baseid+'-'+i);
+      } else {
+        buildButton(flowel, btn, baseid+'-'+i);
+      }
+      curRowSize += thisSize;
+    }
+    wrapel.appendChild(flowel);
+    baseel.appendChild(wrapel);
+  }
+
+  /*
+    Build a button
+  */
+  function buildButton(baseel, btn, baseid) {
+    var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel,nr,nc,cnt;
+
+    btncont = document.createElement("div");
+    btncont.className = "mqed-btn-cont";
+    // set size
+    if (btn.hasOwnProperty('s')) {
+      btncont.style.flexGrow = btn.s;
+    }
+    baseel.appendChild(btncont);
+    if (!btn.hasOwnProperty('l') && !btn.hasOwnProperty('b') && !btn.hasOwnProperty('p')) {
+      //spacer
+      return;
+    }
+
+    btnel = document.createElement("span");
+    btnel.tabIndex = 0;
+    if (btn.hasOwnProperty('l')) { // latex button
+      btnel.className = "mqed-btn rend";
+      btnel.innerText = btn.l;
+      cmdtype = 'c';
+      cmdval = btn.l.substring(1);
+    } else if (btn.hasOwnProperty('b')) { // rendered text button
+      btnel.className = "mqed-btn rend";
+      btnel.innerHTML = btn.b;
+      cmdtype = 't';
+      cmdval = btn.b;
+    } else { // plain text button
+      btnel.className = "mqed-btn";
+      btnel.innerHTML = btn.p;
+      cmdtype = 't';
+      cmdval = btn.p;
+    }
+    // override default command type
+    if (btn.hasOwnProperty('c')) {
+      cmdtype = btn.c;
+      if (cmdtype == 'shift') {
+        $(btnel).addClass("mqed-shift");
+      }
+    }
+    // make it small; 1 for 90%, 2 for 80%, etc.
+    if (btn.hasOwnProperty('sm')) {
+      btnel.style.fontSize = (100-10*btn.sm) + '%';
+    }
+    if (btn.hasOwnProperty('pos') && btn.pos=='end') {
+      $(btncont).addClass("atend");
+    }
+    // override what to write
+    if (btn.hasOwnProperty('w')) {
+      cmdval = btn.w;
+    }
+    // button controls a subpanel
+    if (btn.hasOwnProperty('panel')) {
+      subpanel = document.createElement("div");
+      subpanel.id = baseid + '-sub';
+      // set left or right position (as percent)
+      if (btn.hasOwnProperty('left')) {
+        subpanel.style.left = btn.left + '%';
+        // ensure control button is still visible over panel
+        btnel.style.zIndex = 200;
+      } else {
+        subpanel.style.left = 'auto';
+      }
+      $(btnel).addClass("mqed-tab");
+      if (btn.hasOwnProperty('right')) {
+        subpanel.style.right = btn.right + '%';
+      }
+      subpanel.className = "mqed-subpanel";
+      // build subpanel
+      buildPanel(subpanel, btn.panel);
+      baseel.appendChild(subpanel);
+      cmdtype = 'showpanel';
+      cmdval = subpanel.id;
+    }
+    $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
+    $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
+      .on("touchend", function(evt) { $(evt.currentTarget).removeClass("mactive"); });
+    btncont.appendChild(btnel);
+  }
+
+  /*
+    Build a subpanel
+   */
   function buildPanel(baseel, layoutarr) {
     var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel,nr,nc,cnt;
     for (r=0;r<layoutarr.length;r++) {
@@ -261,77 +393,7 @@ var MQeditor = (function($) {
       row = layoutarr[r];
       for (c=0;c<row.length;c++) {
         btn = row[c];
-        btncont = document.createElement("div");
-        btncont.className = "mqed-btn-cont";
-        // set size
-        if (btn.hasOwnProperty('s')) {
-          btncont.style.flexGrow = btn.s;
-        }
-        rowel.appendChild(btncont);
-        if (!btn.hasOwnProperty('l') && !btn.hasOwnProperty('b') && !btn.hasOwnProperty('p')) {
-          //spacer
-          continue;
-        }
-
-        btnel = document.createElement("span");
-        btnel.tabIndex = 0;
-        if (btn.hasOwnProperty('l')) { // latex button
-          btnel.className = "mqed-btn rend";
-          btnel.innerText = btn.l;
-          cmdtype = 'c';
-          cmdval = btn.l.substring(1);
-        } else if (btn.hasOwnProperty('b')) { // rendered text button
-          btnel.className = "mqed-btn rend";
-          btnel.innerHTML = btn.b;
-          cmdtype = 't';
-          cmdval = btn.b;
-        } else { // plain text button
-          btnel.className = "mqed-btn";
-          btnel.innerHTML = btn.p;
-          cmdtype = 't';
-          cmdval = btn.p;
-        }
-        // override default command type
-        if (btn.hasOwnProperty('c')) {
-          cmdtype = btn.c;
-          if (cmdtype == 'shift') {
-            $(btnel).addClass("mqed-shift");
-          }
-        }
-        // make it small; 1 for 90%, 2 for 80%, etc.
-        if (btn.hasOwnProperty('sm')) {
-          btnel.style.fontSize = (100-10*btn.sm) + '%';
-        }
-        // override what to write
-        if (btn.hasOwnProperty('w')) {
-          cmdval = btn.w;
-        }
-        // button controls a subpanel
-        if (btn.hasOwnProperty('panel')) {
-          subpanel = document.createElement("div");
-          subpanel.id = baseel.id + '-sub-'+r+'-'+c;
-          // set left or right position (as percent)
-          if (btn.hasOwnProperty('left')) {
-            subpanel.style.left = btn.left + '%';
-            // ensure control button is still visible over panel
-            btnel.style.zIndex = 200;
-          } else {
-            subpanel.style.left = 'auto';
-          }
-          if (btn.hasOwnProperty('right')) {
-            subpanel.style.right = btn.right + '%';
-          }
-          subpanel.className = "mqed-subpanel";
-          // build subpanel
-          buildPanel(subpanel, btn.panel);
-          baseel.appendChild(subpanel);
-          cmdtype = 'showpanel';
-          cmdval = subpanel.id;
-        }
-        $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
-        $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
-          .on("touchend", function(evt) { $(evt.currentTarget).removeClass("mactive"); });
-        btncont.appendChild(btnel);
+        buildButton(rowel, btn);
       }
       baseel.appendChild(rowel);
     }
