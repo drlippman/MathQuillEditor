@@ -178,6 +178,12 @@ var MQeditor = (function($) {
       // render buttons then hide subpanels
       $("#mqeditor .mqed-btn.rend").each(function() {MQ.StaticMath(this, {mouseEvents: false}); });
       $("#mqeditor .mqed-subpanel").hide();
+
+      if ($("#mqeditor .mqed-tabrow").length > 0) {
+        $("#mqeditor .mqed-tabpanel").hide().first().show();
+        var tabpanelwrap = $("#mqeditor .mqed-tabrow + div");
+        tabpanelwrap.css("height", tabpanelwrap.height());
+      }
     }
     // now show and position the editor
     if (config.curlayoutstyle === 'OSK') {
@@ -250,10 +256,46 @@ var MQeditor = (function($) {
     }
   }
 
+  function buildTabPanel(baseel, layoutarr, baseid) {
+    var tabdiv = document.createElement("div");
+    tabdiv.className = "mqed-row mqed-tabrow";
+    var panelcont = document.createElement("div");
+    var btncont, btn, paneldiv;
+    baseel.appendChild(tabdiv);
+    baseel.appendChild(panelcont);
+    for (var i=0; i<layoutarr.tabs.length; i++) {
+      if (layoutarr.tabs[i].enabled !== true) {
+        continue;
+      }
+      buildButton(tabdiv, layoutarr.tabs[i], baseid+'-'+i);
+      paneldiv = document.createElement("div");
+      paneldiv.className = "mqed-row mqed-tabpanel";
+      paneldiv.id = baseid+'-'+i+'-tabpanel';
+      panelcont.appendChild(paneldiv);
+      for (var j=0; j < layoutarr.tabs[i].tabcontent.length; j++) {
+        btn = layoutarr.tabs[i].tabcontent[j];
+        if (btn.hasOwnProperty("flow") && btn.contents.length == 0) {
+          continue; // skip container if empty
+        }
+        if (btn.hasOwnProperty("flow")) { //sub layout
+          buildPanel2(paneldiv, btn, baseid+'-'+i+'-'+j);
+        } else {
+          buildButton(paneldiv, btn, baseid+'-'+i+'-'+j);
+        }
+      }
+    }
+
+    $(baseel).find(".mqed-tab").first().addClass("mqed-activetab");
+  }
+
   /*
     Build the editor panel
   */
-  function buildPanel2(baseel, layoutarr, baseid) {
+  function buildPanel3(baseel, layoutarr, baseid) {
+    if (layoutarr.hasOwnProperty('tabs')) {
+      buildTabPanel(baseel, layoutarr, baseid);
+      return;
+    }
     var flow = layoutarr.flow;
     var maxsize = 100;
     if (layoutarr.hasOwnProperty('s') && flow=='row') {
@@ -265,6 +307,67 @@ var MQeditor = (function($) {
     }
     if (layoutarr.hasOwnProperty('class')) {
       wrapel.className = layoutarr.class;
+    }
+    if (layoutarr.hasOwnProperty('tabpanel')) {
+      wrapel.id = layoutarr.tabpanel.id;
+      wrapel.style.display = layoutarr.tabpanel.hidden ? 'none':'';
+    }
+    var flowel = document.createElement("div");
+    flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
+
+    var curRowSize = 0;
+    var btn, btncont, subwrap;
+    var thisSize = 0;
+    for (var i=0; i < layoutarr.contents.length; i++) {
+      btn = layoutarr.contents[i];
+      if (btn.hasOwnProperty("flow") && btn.contents.length == 0) {
+        continue; // skip container if empty
+      }
+      if (btn.hasOwnProperty('s')) {
+        thisSize = btn.s;
+      } else {
+        thisSize = 1;
+      }
+      if (curRowSize + thisSize > maxsize) {
+        wrapel.appendChild(flowel);
+        curRowSize = 0;
+        var flowel = document.createElement("div");
+        flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
+      }
+      if (btn.hasOwnProperty("flow")) { //sub layout
+        buildPanel2(flowel, btn, baseid+'-'+i);
+      } else {
+        buildButton(flowel, btn, baseid+'-'+i);
+      }
+      curRowSize += thisSize;
+    }
+    wrapel.appendChild(flowel);
+    baseel.appendChild(wrapel);
+  }
+
+  /*
+    Build the editor panel
+  */
+  function buildPanel2(baseel, layoutarr, baseid) {
+    if (layoutarr.hasOwnProperty('tabs')) {
+      buildTabPanel(baseel, layoutarr, baseid);
+      return;
+    }
+    var flow = layoutarr.flow;
+    var maxsize = 100;
+    if (layoutarr.hasOwnProperty('s') && flow=='row') {
+      maxsize = layoutarr.s;
+    }
+    var wrapel = document.createElement("div");
+    if (layoutarr.hasOwnProperty('s')) {
+      wrapel.style.flexGrow = layoutarr.s;
+    }
+    if (layoutarr.hasOwnProperty('class')) {
+      wrapel.className = layoutarr.class;
+    }
+    if (layoutarr.hasOwnProperty('tabpanel')) {
+      wrapel.id = layoutarr.tabpanel.id;
+      wrapel.style.display = layoutarr.tabpanel.hidden ? 'none':'';
     }
     var flowel = document.createElement("div");
     flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
@@ -329,6 +432,9 @@ var MQeditor = (function($) {
       btnel.innerHTML = btn.b;
       cmdtype = 't';
       cmdval = btn.b;
+      if (cmdval.match(/^\d$/) || cmdval=='.') {
+        $(btnel).addClass("mqed-digitkey");
+      }
     } else { // plain text button
       btnel.className = "mqed-btn";
       btnel.innerHTML = btn.p;
@@ -340,6 +446,8 @@ var MQeditor = (function($) {
       cmdtype = btn.c;
       if (cmdtype == 'shift') {
         $(btnel).addClass("mqed-shift");
+      } else if (cmdtype == 'k') {
+        $(btnel).addClass("mqed-navkey");
       }
     }
     // make it small; 1 for 90%, 2 for 80%, etc.
@@ -375,6 +483,10 @@ var MQeditor = (function($) {
       baseel.appendChild(subpanel);
       cmdtype = 'showpanel';
       cmdval = subpanel.id;
+    } else if (btn.hasOwnProperty('tabcontent')) {
+      $(btnel).addClass("mqed-tab");
+      cmdtype = 'showtabpanel';
+      cmdval = baseid+'-tabpanel';
     }
     $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
     $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
@@ -429,7 +541,7 @@ var MQeditor = (function($) {
       // do typedText
       if (cmdval.match(/^[a-zA-Z]$/)) {
         // check for shift key being active
-        if ($(event.target).closest('.mqed-subpanel').find(".mqed-shift").hasClass("active")) {
+        if ($(event.target).closest('.mqed-subpanel,.mqed-tabpanel').find(".mqed-shift").hasClass("active")) {
           cmdval = cmdval.toUpperCase();
         }
       }
@@ -505,10 +617,16 @@ var MQeditor = (function($) {
         target.removeClass("active");
         $(subpanel).hide();
       }
+    } else if (cmdtype=='showtabpanel') {
+      var target = $(event.target).closest('.mqed-btn');
+      target.closest(".mqeditor").find(".mqed-tabpanel").hide();
+      target.closest(".mqeditor").find(".mqed-btn.mqed-activetab").removeClass("mqed-activetab");
+      $("#"+cmdval).show();
+      target.addClass("mqed-activetab");
     } else if (cmdtype=='shift') {
       // enable Shift in alphabet panel
       var target = $(event.target).closest('.mqed-btn');
-      var subpanel = $(event.target).closest('.mqed-subpanel');
+      var subpanel = $(event.target).closest('.mqed-subpanel,.mqed-tabpanel');
       var goingActive = !target.hasClass("active");
       if (goingActive) {
         target.addClass("active");

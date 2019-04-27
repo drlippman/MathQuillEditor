@@ -4,101 +4,188 @@
   We'll pass those functions to the MQeditor in the config.
  */
 var myMQeditor = (function($) {
-  var mobileLayout2 = {
-    flow: 'row',
-    contents: [
+  var mobileLayout3 = {
+    tabs: [
       {
-        flow: 'col',
-        s: 2,
-        contents: [
+        p: 'Basic',
+        enabled: true,
+        tabcontent: [
           {
-            p: 'ABC',
-            pos: 'end',
-            left: 0,
-            panel: [
-              [
-                {p:'q'},{p:'w'},{p:'e'},{p:'r'},{p:'t'},
-                {p:'y'},{p:'u'},{p:'i'},{p:'o'},{p:'p'}
-              ],
-              [
-                {s:.5},{p:'a'},{p:'s'},{p:'d'},{p:'f'},{p:'g'},
-                {p:'h'},{p:'j'},{p:'k'},{p:'o'},{s:.5}
-              ],
-              [
-                {b:'&#8679;', c:'shift', s:1.5},
-                {p:'z'},{p:'x'},{p:'c'},{p:'v'},{p:'b'},
-                {p:'n'},{p:'m'},
-                {b:'&#x232B;', c:'k', w:'Backspace', s:1.5}
-              ],
-              [
-                {s:2},
-                {l:'\\left[\\right]', c:'i', w:'[]'},
-                {l:'\\langle{}', c:'c', w:'\\langle'},
-                {p:'%'},
-                {p:','},
-                {b:'&larr;', c:'k', w:'Left'},
-                {b:'&rarr;', c:'k', w:'Right'}
-              ]
+            flow: 'row',
+            s: 2,
+            contents: [
+              {l:'\\left(\\right)', c:'t', w:'('},
+              {l:'x^{}', c:'t', w:'^', nb:1},
+              {l:'\\pi', nb:1},
+              {l:'\\sqrt{}', c:'c', w:'sqrt', nb:1},
+              {l:'\\infty'},
+              {l:'\\sqrt[n]{}', c:'c', w:'nthroot', nb:1},
+              {p:'DNE', 'sm':2},
+              {l:'\\left|\\right|', c:'t', w:'|', nb:1}
+            ]
+          },
+          {s:.1},
+          {
+            flow: 'row',
+            s:4,
+            contents: [
+              {b:'7'},
+              {b:'8'},
+              {b:'9'},
+              {l:'\\frac{}{}', c:'t', w:'/'},
+              {b:'4'},
+              {b:'5'},
+              {b:'6'},
+              {b:'*'},
+              {b:'1'},
+              {b:'2'},
+              {b:'3'},
+              {b:'-'},
+              {b:'0'},
+              {b:'.'},
+              {s:1},
+              {b:'+'},
+            ]
+          },
+          {s:.1},
+          {
+            flow: 'row',
+            s:2,
+            contents: [
+              {s:.5},
+              {b:'&uarr;', c:'k', w:'Up'},
+              {s:.5},
+              {b:'&larr;', c:'k', w:'Left'},
+              {b:'&rarr;', c:'k', w:'Right'},
+              {s:.5},
+              {b:'&darr;', c:'k', w:'Down'},
+              {s:.5},
+              {b:'&#x232B;', s:2, c:'k', w:'Backspace'},
             ]
           }
         ]
       },
-      {s:.1},
       {
-        flow: 'row',
-        s: 2,
-        contents: [
-          {l:'\\left(\\right)', c:'t', w:'('},
-          {l:'x^{}', c:'t', w:'^', nb:1},
-          {l:'\\pi', nb:1},
-          {l:'\\sqrt{}', c:'c', w:'sqrt', nb:1},
-          {l:'\\infty'},
-          {l:'\\sqrt[n]{}', c:'c', w:'nthroot', nb:1},
-          {p:'DNE', 'sm':2},
-          {l:'\\left|\\right|', c:'t', w:'|', nb:1}
+        p:'Funcs',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 6,
+            contents: [
+              {l:'\\log', c:'f'},
+              {l:'\\ln', c:'f'},
+              {l:'\\log_{}', c:'f'},
+              {l:'e^{}', c:'t', w:'e^'},
+              {s:2},
+              {l:'\\sin', c:'f'},
+              {l:'\\cos', c:'f'},
+              {l:'\\tan', c:'f'},
+              {l:'\\sec', c:'f'},
+              {l:'\\csc', c:'f'},
+              {l:'\\cot', c:'f'},
+              {l:'\\sin^{-1}', c:'f'},
+              {l:'\\cos^{-1}', c:'f'},
+              {l:'\\tan^{-1}', c:'f'},
+              {l:'\\sinh', c:'f'},
+              {l:'\\cosh', c:'f'},
+              {l:'\\tanh', c:'f'}
+            ]
+          }
         ]
       },
-      {s:.1},
       {
-        flow: 'row',
-        s:4,
-        contents: [
-          {b:'7'},
-          {b:'8'},
-          {b:'9'},
-          {l:'\\frac{}{}', c:'t', w:'/'},
-          {b:'4'},
-          {b:'5'},
-          {b:'6'},
-          {b:'*'},
-          {b:'1'},
-          {b:'2'},
-          {b:'3'},
-          {b:'-'},
-          {b:'0'},
-          {b:'.'},
-          {s:1},
-          {b:'+'},
+        p:'Inequality',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {l:'\\lt'},
+              {l:'\\gt'},
+              {l:'\\le'},
+              {l:'\\ge'},
+              {p:'or', c:'w', w:'\\text{ or }'},
+              {p:'DNE', 'sm':2},
+              {p:'all reals', c:'w', w:'\\text{all reals}', s:2}
+            ]
+          }
         ]
       },
-      {s:.1},
       {
-        flow: 'row',
-        s:2,
-        contents: [
-          {s:.5},
-          {b:'&uarr;', c:'k', w:'Up'},
-          {s:.5},
-          {b:'&larr;', c:'k', w:'Left'},
-          {b:'&rarr;', c:'k', w:'Right'},
-          {s:.5},
-          {b:'&darr;', c:'k', w:'Down'},
-          {s:.5},
-          {b:'&#x232B;', s:2, c:'k', w:'Backspace'},
+        p:'Interval',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {l:'\\left(\\right)', c:'i', w:'()'},
+              {l:'\\left[\\right]', c:'i', w:'[]'},
+              {l:'\\left(\\right]', c:'i', w:'(]'},
+              {l:'\\left[\\right)', c:'i', w:'[)'},
+              {l:'\\infty'},
+              {l:'-\\infty', c:'w'},
+              {l:'\\cup'},
+              {s:1}
+            ]
+          }
+        ]
+      },
+      {
+        p:'Matrix',
+        sm: 1,
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {p:'2×2', c:'w', w:'\\begin{bmatrix}&\\\\&\\end{bmatrix}'},
+              {p:'2×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\end{bmatrix}'},
+              {p:'3×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\\\&&\\end{bmatrix}'},
+              {p:'3×4', c:'w', w:'\\begin{bmatrix}&&&\\\\&&&\\\\&&&\\end{bmatrix}'},
+              {p:'+Col', c:'m', w:'addColumn'},
+              {p:'-Col', c:'m', w:'deleteColumn'},
+              {p:'+Row', c:'m', w:'addRow'},
+              {p:'-Row', c:'m', w:'deleteRow'}
+            ]
+          }
+        ]
+      },
+      {
+        p:'ABC',
+        enabled: true,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 10,
+            contents: [
+              {p:'q'},{p:'w'},{p:'e'},{p:'r'},{p:'t'},
+              {p:'y'},{p:'u'},{p:'i'},{p:'o'},{p:'p'},
+              {s:.5},{p:'a'},{p:'s'},{p:'d'},{p:'f'},{p:'g'},
+              {p:'h'},{p:'j'},{p:'k'},{p:'o'},{s:.5},
+              {b:'&#8679;', c:'shift', s:1.5},
+              {p:'z'},{p:'x'},{p:'c'},{p:'v'},{p:'b'},
+              {p:'n'},{p:'m'},
+              {b:'&#x232B;', c:'k', w:'Backspace', s:1.5},
+              {s:2},
+              {l:'\\left[\\right]', c:'i', w:'[]'},
+              {l:'\\langle{}', c:'c', w:'\\langle'},
+              {p:'%'},
+              {p:','},
+              {b:'&larr;', c:'k', w:'Left'},
+              {b:'&rarr;', c:'k', w:'Right'}
+            ]
+          }
         ]
       }
+
+
     ]
   };
+
   var underLayout2 = {
     flow: 'row',
     contents: [
@@ -140,76 +227,6 @@ var myMQeditor = (function($) {
     ]
   };
 
-  var ineqPanel = {b:'&le;', 'panel': [
-    [
-      {l:'\\lt'},
-      {l:'\\gt'},
-      {l:'\\le'},
-      {l:'\\ge'}
-    ],
-    [
-      {p:'or'},
-      {p:'DNE', 'sm':2},
-      {p:'all reals', c:'w', w:'\\text{all reals}', s:2}
-    ]
-  ]};
-  var intervalPanel = {l:'\\left({},{}\\right]', 'panel': [
-    [
-      {l:'\\left(\\right)', c:'i', w:'()'},
-      {l:'\\left[\\right]', c:'i', w:'[]'},
-      {l:'\\left(\\right]', c:'i', w:'(]'},
-      {l:'\\left[\\right)', c:'i', w:'[)'}
-    ],
-    [
-      {l:'\\infty'},
-      {l:'-\\infty', c:'w'},
-      {l:'\\cup'},
-      {s:1}
-    ]
-  ]};
-  var matrixPanel = {p:'Matrix', sm: 1, panel: [
-    [
-      {p:'2×2', c:'w', w:'\\begin{bmatrix}&\\\\&\\end{bmatrix}'},
-      {p:'2×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\end{bmatrix}'},
-      {p:'3×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\\\&&\\end{bmatrix}'},
-      {p:'3×4', c:'w', w:'\\begin{bmatrix}&&&\\\\&&&\\\\&&&\\end{bmatrix}'}
-    ],
-    [
-      {p:'+Col', c:'m', w:'addColumn'},
-      {p:'-Col', c:'m', w:'deleteColumn'},
-      {p:'+Row', c:'m', w:'addRow'},
-      {p:'-Row', c:'m', w:'deleteRow'}
-    ]
-  ]};
-  var funcsPanel = {
-    p:'Funcs',
-    panel: [
-      [
-        {l:'\\log', c:'f'},
-        {l:'\\ln', c:'f'},
-        {l:'\\log_{}', c:'f'},
-        {l:'e^{}', c:'t', w:'e^'},
-        {s:1},
-        {s:1}
-      ],
-      [
-        {l:'\\sin', c:'f'},
-        {l:'\\cos', c:'f'},
-        {l:'\\tan', c:'f'},
-        {l:'\\sec', c:'f'},
-        {l:'\\csc', c:'f'},
-        {l:'\\cot', c:'f'}
-      ],
-      [
-        {l:'\\sin^{-1}', c:'f'},
-        {l:'\\cos^{-1}', c:'f'},
-        {l:'\\tan^{-1}', c:'f'},
-        {l:'\\sinh', c:'f'},
-        {l:'\\cosh', c:'f'},
-        {l:'\\tanh', c:'f'}
-      ]
-    ]
-  };
 
   function getLayout(el) {
     var layoutstyle = MQeditor.getLayoutstyle();
@@ -222,43 +239,65 @@ var myMQeditor = (function($) {
     var qtype = calcformat.split(/,/)[0];
     var baselayout = [];
     if (layoutstyle === 'OSK') {
-      baselayout = $.extend(true, [], mobileLayout2);
+      baselayout = $.extend(true, [], mobileLayout3);
       if (!calcformat.match(/(fraction|mixed)/)) {
-        baselayout.contents[0].contents.unshift(funcsPanel);
-      }
-      if (qtype == 'numfunc' && vars.length > 0) {
-        baselayout.contents[0].contents.unshift(getVarsButtons(vars));
+        baselayout.tabs[1].enabled = true;
+      } else {
+        baselayout.tabs[0].tabcontent[0].s = 1;
+        baselayout.tabs[0].tabcontent[0].contents = [
+          {l:'\\infty'},
+          {p:'DNE', 'sm':2},
+        ];
+        baselayout.tabs[0].tabcontent[2].contents[7] =
+        baselayout.tabs[0].tabcontent[2].contents[11] =
+        baselayout.tabs[0].tabcontent[2].contents[13] =
+        baselayout.tabs[0].tabcontent[2].contents[15] = {s:1}
       }
       if (qtype=='calcinterval') {
         if (calcformat.match(/inequality/)) {
-          baselayout.contents[0].contents.splice(
-            baselayout.contents[0].contents.length - 1, 0,
-            ineqPanel
-          );
+          baselayout.tabs[2].enabled = true;
         } else {
-          baselayout.contents[0].contents.splice(
-            baselayout.contents[0].contents.length - 1, 0,
-            intervalPanel
-          );
+          baselayout.tabs[3].enabled = true;
         }
       } else if (qtype=='calcmatrix') {
-        baselayout.contents[0].contents.splice(
-          baselayout.contents[0].contents.length - 1, 0,
-          matrixPanel
-        );
-      } else if (calcformat.match(/point/)) {
-        baselayout.contents[0].contents.unshift(
-          {l:'\\left(\\right)', c:'t', w:'('}
-        );
+        baselayout.tabs[4].enabled = true;
+      } else if (calcformat.match(/set/)) {
+        baselayout.tabs[0].tabcontent.unshift({
+          flow: 'row',
+          s: 1,
+          contents: [{l:'\\left{\\right}', c:'i', w:'{}'}]
+        }, {s:.1});
       } else if (calcformat.match(/vector/)) {
-        baselayout.contents[0].contents.unshift(
-          {l:'\\langle{}', c:'c', w:'\\langle'}
-        );
+        baselayout.tabs[0].tabcontent.unshift({
+          flow: 'row',
+          s: 1,
+          contents: [{l:'\\langle{}', c:'c', w:'\\langle'}]
+        }, {s:.1});
       }
       if (calcformat.match(/(list|set)/) || qtype=='string') {
-        baselayout.contents[4].contents[14] = {'b':','};
+        baselayout.tabs[0].tabcontent[2].contents[14] = {'b':','};
       } else if (calcformat.match(/equation/)) { // replace , with =
-        baselayout.contents[4].contents[14] = {'b':'='};
+        baselayout.tabs[0].tabcontent[2].contents[14] = {'b':'='};
+      }
+      if (vars.length > 0) {
+        var varbtns = getVarsButtons2(vars);
+        if (varbtns.format == 'basic') {
+          baselayout.tabs[0].tabcontent.unshift({
+            flow: 'row',
+            s: 1,
+            contents: varbtns.btns
+          }, {s:.1});
+        } else {
+          baselayout.tabs.splice(1, 0, {
+            p: 'Vars',
+            enabled: true,
+            tabcontent: [{
+              flow: 'row',
+              s: varbtns.perrow,
+              contents: varbtns.btns
+            }]
+          });
+        }
       }
     } else { // under layout
       baselayout = $.extend(true, [], underLayout2);
@@ -306,6 +345,28 @@ var myMQeditor = (function($) {
     return baselayout;
   }
   var greekletters = [''];
+
+  function getVarsButtons2(vars) {
+    var maxlen = 1;
+    var btns = [];
+    for (var i=0; i<vars.length; i++) {
+      vars[i] = vars[i].replace(/alpha|beta|chi|delta|epsilon|gamma|varphi|phi|psi|sigma|rho|theta|lambda|mu|nu|omega|tau/i,
+        '\\$&');
+      if (vars[i].charAt(0)!='\\' && vars[i].length > maxlen) {
+        maxlen = vars[i].length;
+      }
+      btns.push({'b':vars[i], c:'w'});
+    }
+    var perrow = Math.min(8,Math.max(4, Math.ceil(vars.length/4)));
+    if (vars.length%perrow !== 0) {
+      btns.push({'s': perrow - vars.length%perrow});
+    }
+    return {
+      format: (vars.length<5 && maxlen < 4) ? 'basic' : 'tab',
+      btns: btns,
+      perrow: perrow
+    };
+  }
 
   function getVarsButtons(vars) {
     for (var i=0; i<vars.length; i++) {
