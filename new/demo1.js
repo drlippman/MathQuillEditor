@@ -71,13 +71,24 @@ var myMQeditor = (function($) {
         tabcontent: [
           {
             flow: 'row',
-            s: 6,
+            s: 4,
             contents: [
               {l:'\\log', c:'f'},
               {l:'\\ln', c:'f'},
               {l:'\\log_{}', c:'f'},
               {l:'e^{}', c:'t', w:'e^'},
-              {s:2},
+            ]
+          }
+        ]
+      },
+      {
+        p:'Trig',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 6,
+            contents: [
               {l:'\\sin', c:'f'},
               {l:'\\cos', c:'f'},
               {l:'\\tan', c:'f'},
@@ -165,7 +176,7 @@ var myMQeditor = (function($) {
               {p:'q'},{p:'w'},{p:'e'},{p:'r'},{p:'t'},
               {p:'y'},{p:'u'},{p:'i'},{p:'o'},{p:'p'},
               {s:.5},{p:'a'},{p:'s'},{p:'d'},{p:'f'},{p:'g'},
-              {p:'h'},{p:'j'},{p:'k'},{p:'o'},{s:.5},
+              {p:'h'},{p:'j'},{p:'k'},{p:'l'},{s:.5},
               {b:'&#8679;', c:'shift', s:1.5},
               {p:'z'},{p:'x'},{p:'c'},{p:'v'},{p:'b'},
               {p:'n'},{p:'m'},
@@ -181,11 +192,147 @@ var myMQeditor = (function($) {
           }
         ]
       }
-
-
     ]
   };
 
+  var underLayout3 = {
+    tabs: [
+      {
+        p: 'Basic',
+        enabled: true,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 5,
+            contents: [
+              {l:'\\frac{}{}', c:'t', w:'/'},
+              {l:'x^{}', c:'t', w:'^', nb:1},
+              {l:'x_{}', c:'t', w:'_', nb:1},
+              {l:'\\sqrt{}', c:'c', w:'sqrt', nb:1},
+              {l:'\\sqrt[n]{}', c:'c', w:'nthroot', nb:1},
+              {l:'\\left(\\right)', c:'t', w:'('},
+              {l:'\\left|\\right|', c:'t', w:'|', nb:1},
+              {l:'\\pi', nb:1},
+              {l:'\\infty'},
+              {p:'DNE', 'sm':2}
+            ]
+          },
+          {s:.1},
+          {
+            flow: 'row',
+            s:2,
+            contents: [
+              {b:'&uarr;', c:'k', w:'Up'},
+              {b:'&darr;', c:'k', w:'Down'},
+              {b:'&larr;', c:'k', w:'Left'},
+              {b:'&rarr;', c:'k', w:'Right'},
+              {b:'&#x232B;', s:2, c:'k', w:'Backspace'},
+            ]
+          }
+        ]
+      },
+      {
+        p:'Funcs',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {l:'\\log', c:'f'},
+              {l:'\\ln', c:'f'},
+              {l:'\\log_{}', c:'f'},
+              {l:'e^{}', c:'t', w:'e^'},
+            ]
+          }
+        ]
+      },
+      {
+        p:'Trig',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 6,
+            contents: [
+              {l:'\\sin', c:'f'},
+              {l:'\\cos', c:'f'},
+              {l:'\\tan', c:'f'},
+              {l:'\\sec', c:'f'},
+              {l:'\\csc', c:'f'},
+              {l:'\\cot', c:'f'},
+              {l:'\\sin^{-1}', c:'f'},
+              {l:'\\cos^{-1}', c:'f'},
+              {l:'\\tan^{-1}', c:'f'},
+              {l:'\\sinh', c:'f'},
+              {l:'\\cosh', c:'f'},
+              {l:'\\tanh', c:'f'}
+            ]
+          }
+        ]
+      },
+      {
+        p:'Inequality',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {l:'\\lt'},
+              {l:'\\gt'},
+              {l:'\\le'},
+              {l:'\\ge'},
+              {p:'or', c:'w', w:'\\text{ or }'},
+              {p:'DNE', 'sm':2},
+              {p:'all reals', c:'w', w:'\\text{all reals}', s:2}
+            ]
+          }
+        ]
+      },
+      {
+        p:'Interval',
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {l:'\\left(\\right)', c:'i', w:'()'},
+              {l:'\\left[\\right]', c:'i', w:'[]'},
+              {l:'\\left(\\right]', c:'i', w:'(]'},
+              {l:'\\left[\\right)', c:'i', w:'[)'},
+              {l:'\\infty'},
+              {l:'-\\infty', c:'w'},
+              {l:'\\cup'},
+              {s:1}
+            ]
+          }
+        ]
+      },
+      {
+        p:'Matrix',
+        sm: 1,
+        enabled: false,
+        tabcontent: [
+          {
+            flow: 'row',
+            s: 4,
+            contents: [
+              {p:'2×2', c:'w', w:'\\begin{bmatrix}&\\\\&\\end{bmatrix}'},
+              {p:'2×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\end{bmatrix}'},
+              {p:'3×3', c:'w', w:'\\begin{bmatrix}&&\\\\&&\\\\&&\\end{bmatrix}'},
+              {p:'3×4', c:'w', w:'\\begin{bmatrix}&&&\\\\&&&\\\\&&&\\end{bmatrix}'},
+              {p:'+Col', c:'m', w:'addColumn'},
+              {p:'-Col', c:'m', w:'deleteColumn'},
+              {p:'+Row', c:'m', w:'addRow'},
+              {p:'-Row', c:'m', w:'deleteRow'}
+            ]
+          }
+        ]
+      }
+    ]
+  };
   var underLayout2 = {
     flow: 'row',
     contents: [
@@ -228,8 +375,7 @@ var myMQeditor = (function($) {
   };
 
 
-  function getLayout(el) {
-    var layoutstyle = MQeditor.getLayoutstyle();
+  function getLayout(el, layoutstyle) {
     var baseid = el.id.substring(8);
     var textel = $('#'+baseid);
     //TODO: fix this - need to get from params
@@ -240,44 +386,41 @@ var myMQeditor = (function($) {
     var baselayout = [];
     if (layoutstyle === 'OSK') {
       baselayout = $.extend(true, [], mobileLayout3);
-      if (!calcformat.match(/(fraction|mixed)/)) {
-        baselayout.tabs[1].enabled = true;
-      } else {
+      if (calcformat.match(/(fraction|mixednumber|fracordec)/)) {
         baselayout.tabs[0].tabcontent[0].s = 1;
         baselayout.tabs[0].tabcontent[0].contents = [
+          {l:'\\frac{n}{}', c:'t', w:'/'},
+          {b:'\\frac{}{}', c:'c', w:'\\frac'},
           {l:'\\infty'},
           {p:'DNE', 'sm':2},
         ];
-        baselayout.tabs[0].tabcontent[2].contents[7] =
-        baselayout.tabs[0].tabcontent[2].contents[11] =
-        baselayout.tabs[0].tabcontent[2].contents[13] =
-        baselayout.tabs[0].tabcontent[2].contents[15] = {s:1}
-      }
-      if (qtype=='calcinterval') {
-        if (calcformat.match(/inequality/)) {
-          baselayout.tabs[2].enabled = true;
-        } else {
-          baselayout.tabs[3].enabled = true;
+        baselayout.tabs[0].tabcontent[2] = {
+          flow:'row',
+          s:3,
+          contents: [
+            {b:'7'},
+            {b:'8'},
+            {b:'9'},
+            {b:'4'},
+            {b:'5'},
+            {b:'6'},
+            {b:'1'},
+            {b:'2'},
+            {b:'3'},
+            {b:'0'},
+            calcformat.match(/fracordec/) ? {'b':'.'} : {s:1},
+            calcformat.match(/(list|set)/) ? {'b':','} : {s:1}
+          ]
+        };
+      } else {
+        if (calcformat.match(/(list|set)/) || qtype=='string') {
+          baselayout.tabs[0].tabcontent[2].contents[14] = {'b':','};
+        } else if (calcformat.match(/equation/)) { // replace , with =
+          baselayout.tabs[0].tabcontent[2].contents[14] = {'b':'='};
         }
-      } else if (qtype=='calcmatrix') {
-        baselayout.tabs[4].enabled = true;
-      } else if (calcformat.match(/set/)) {
-        baselayout.tabs[0].tabcontent.unshift({
-          flow: 'row',
-          s: 1,
-          contents: [{l:'\\left{\\right}', c:'i', w:'{}'}]
-        }, {s:.1});
-      } else if (calcformat.match(/vector/)) {
-        baselayout.tabs[0].tabcontent.unshift({
-          flow: 'row',
-          s: 1,
-          contents: [{l:'\\langle{}', c:'c', w:'\\langle'}]
-        }, {s:.1});
-      }
-      if (calcformat.match(/(list|set)/) || qtype=='string') {
-        baselayout.tabs[0].tabcontent[2].contents[14] = {'b':','};
-      } else if (calcformat.match(/equation/)) { // replace , with =
-        baselayout.tabs[0].tabcontent[2].contents[14] = {'b':'='};
+        if (calcformat.match(/nodecimal/)) {
+          baselayout.tabs[0].tabcontent[2].contents[13] = {s:1};
+        }
       }
       if (vars.length > 0) {
         var varbtns = getVarsButtons2(vars);
@@ -299,48 +442,45 @@ var myMQeditor = (function($) {
           });
         }
       }
-    } else { // under layout
-      baselayout = $.extend(true, [], underLayout2);
-      if (!calcformat.match(/(fraction|mixed)/)) {
-        baselayout.contents[0].contents.unshift(funcsPanel);
-      }
-      if (qtype=='calcinterval') {
-        if (calcformat.match(/inequality/)) {
-          baselayout.contents[0].contents.splice(
-            baselayout.contents[0].contents.length - 1, 0,
-            ineqPanel
-          );
-        } else {
-          baselayout.contents[0].contents.splice(
-            baselayout.contents[0].contents.length - 1, 0,
-            intervalPanel
-          );
-        }
-      } else if (qtype=='calcmatrix') {
-        baselayout.contents[0].contents.splice(
-          baselayout.contents[0].contents.length - 1, 0,
-          matrixPanel
-        );
-      } else if (calcformat.match(/point/)) {
-        baselayout.contents[0].contents.unshift(
-          {l:'\\left(\\right)', c:'t', w:'('}
-        );
-      } else if (calcformat.match(/vector/)) {
-        baselayout.contents[0].contents.unshift(
-          {l:'\\langle{}', c:'c', w:'\\langle'}
-        );
+    } else {
+      baselayout = $.extend(true, [], underLayout3);
+      if (calcformat.match(/(fraction|mixednumber|fracordec)/)) {
+        baselayout.tabs[0].tabcontent[0].s = 4;
+        baselayout.tabs[0].tabcontent[0].contents = [
+          {l:'\\frac{n}{}', c:'t', w:'/'},
+          {l:'\\frac{}{}', c:'c', w:'\\frac'},
+          {l:'\\infty'},
+          {p:'DNE', 'sm':2},
+        ];
       }
     }
-    if (calcformat.match(/(fraction|mixed)/)) { // elim non-basic btns
-      var r,c,sz;
-      for (r=0;r<baselayout.length;r++) {
-        for (c=0;c<baselayout[r].length;c++) {
-          if (baselayout[r][c].hasOwnProperty('nb')) {
-            sz = baselayout[r][c].s || 1;
-            baselayout[r][c] = {s:sz};
-          }
-        }
+    // for both
+    if (!calcformat.match(/(fraction|mixednumber|fracordec)/)) {
+      baselayout.tabs[1].enabled = true;
+      if (!calcformat.match(/notrig/)) {
+        baselayout.tabs[2].enabled = true;
       }
+    }
+    if (qtype=='calcinterval') {
+      if (calcformat.match(/inequality/)) {
+        baselayout.tabs[3].enabled = true;
+      } else {
+        baselayout.tabs[4].enabled = true;
+      }
+    } else if (qtype=='calcmatrix') {
+      baselayout.tabs[5].enabled = true;
+    } else if (calcformat.match(/set/)) {
+      baselayout.tabs[0].tabcontent.unshift({
+        flow: 'row',
+        s: 1,
+        contents: [{l:'\\left{\\right}', c:'i', w:'{}'}]
+      }, {s:.1});
+    } else if (calcformat.match(/vector/)) {
+      baselayout.tabs[0].tabcontent.unshift({
+        flow: 'row',
+        s: 1,
+        contents: [{l:'\\langle{}', c:'c', w:'\\langle'}]
+      }, {s:.1});
     }
     return baselayout;
   }
@@ -405,9 +545,40 @@ var myMQeditor = (function($) {
     }
   }
 
+  function onShow(mqel, layoutstyle, rebuild) {
+    if (rebuild && layoutstyle === 'under') {
+      var baseid = mqel.id.substring(8);
+      var textel = $('#'+baseid);
+      if (textel[0].hasAttribute("data-tip")) {
+        var tabpanel = $("#mqeditor .mqed-tabpanel").first();
+        var lastdiv = tabpanel.children("div").last();
+        var tipwidth = lastdiv.position().left - 12;
+        var div = document.createElement("div");
+        tabpanel.parent().css("height", "auto").append($("<div>", {
+          width: tipwidth,
+          class: "mqed-tipholder"
+        }).append($("<div>", {
+          html: textel.attr("data-tip")
+        })));
+      }
+    }
+  }
+
+  function onTab(tabbtn, layoutstyle, tabid) {
+    if (layoutstyle === 'under') {
+      if (tabid.match(/mqeditor-0-tabpanel/)) {
+        $(".mqed-tipholder").show();
+      } else {
+        console.log("hide");
+        $(".mqed-tipholder").hide();
+      }
+    }
+  }
 
   return {
-    getLayout: getLayout
+    getLayout: getLayout,
+    onShow: onShow,
+    onTab: onTab
   }
 })(jQuery);
 
@@ -417,7 +588,9 @@ var myMQeditor = (function($) {
  */
 // Tell the editor to use our functions above to generate layout
 MQeditor.setConfig({
-  getLayout: myMQeditor.getLayout
+  getLayout: myMQeditor.getLayout,
+  onShow: myMQeditor.onShow,
+  onTab: myMQeditor.onTab
 });
 
 // set the default MathQuill config.

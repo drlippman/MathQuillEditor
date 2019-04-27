@@ -16,15 +16,6 @@
   border: 0;
   border-top: 1px solid #ccc;
 }
-.mqeditor .mqed-subpanel {
-  padding: 3px;
-  position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
-  background-color: #f6f6f6;
-  z-index: 10;
-  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.4);
-  border-radius: 4px;
-}
 .mqed-row, .mqed-col {
   display: flex;
   align-items: stretch;
@@ -73,16 +64,16 @@
   font-family: Symbola, "Times New Roman", serif;
 }
 .mqed-btn:hover {
-  background-color: #eee;
+  background-color: #f2f2ff !important;
 }
 .mqed-btn:active, .mqed-btn.mactive, .mqed-btn.active {
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
 }
 .mqed-btn.mqed-navkey {
-  background-color: #f4f4f4;
+  background-color: #eee;
 }
 .mqed-btn.mqed-digitkey {
-  background-color: #f4f4f4;
+  background-color: #eee;
 }
 .mqed-tab {
   border: 0;
@@ -90,19 +81,11 @@
   color: #339;
   border-radius: 0;
   font-size: 90%;
+  margin-bottom:2px;
 }
 .mqed-tabpanel {
-  padding-top:2px;
+  position: relative;
 }
-/*.mqed-tab::after {
-  position: absolute;
-  right: 2px;
-  content: "\25b8"
-}
-.mqed-tab.active::after {
-  content: "\25c2"
-}
-*/
 .mqed-tabrow {
   background-color: #fff;
 }

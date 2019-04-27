@@ -32,6 +32,7 @@ var MQeditor = (function($) {
     layout: array that defines the palette buttons
     getLayout: a function that returns a layout. Gets passed the MQ element.
     getLayoutstyle: a function that returns a value for layoutstyle.
+    onShow: a callback for when editor is shown. Gets passed the MQ element.
     toMQ:  function to convert text to MQ latex
     fromMQ: function to convert MQ latex to input
    */
@@ -162,22 +163,27 @@ var MQeditor = (function($) {
     } else {
       $("#mqeditor").removeClass("fixedbottom");
     }
+    var rebuild = false;
     // see if the field has changed
     if (curMQfield === null || mqel[0] != curMQfield.el() ||
       lastlayoutstyle !== config.curlayoutstyle
     ) {
+      rebuild = true;
       // new field; need to build the panel
       // update the layout based on the element
       if (config.hasOwnProperty("getLayout")) {
-        config.layout = config.getLayout(mqel[0]);
+        config.layout = config.getLayout(mqel[0], config.curlayoutstyle);
       }
       // empty existing
       $("#mqeditor").empty().show();
       // build new panel
-      buildPanel2(document.getElementById("mqeditor"), config.layout, "mqeditor");
-      // render buttons then hide subpanels
+      if (config.layout.tabs) {
+        buildTabPanel(document.getElementById("mqeditor"), config.layout, "mqeditor");
+      } else {
+        buildPanel(document.getElementById("mqeditor"), config.layout, "mqeditor");
+      }
+      // render buttons then hide tabpanels
       $("#mqeditor .mqed-btn.rend").each(function() {MQ.StaticMath(this, {mouseEvents: false}); });
-      $("#mqeditor .mqed-subpanel").hide();
 
       if ($("#mqeditor .mqed-tabrow").length > 0) {
         $("#mqeditor .mqed-tabpanel").hide().first().show();
@@ -193,6 +199,9 @@ var MQeditor = (function($) {
     }
     positionEditor(mqel);
     curMQfield = MQ.MathField(mqel[0]);
+    if (config.hasOwnProperty('onShow')) {
+      config.onShow(mqel[0], config.curlayoutstyle, rebuild);
+    }
   }
 
   /*
@@ -278,24 +287,19 @@ var MQeditor = (function($) {
           continue; // skip container if empty
         }
         if (btn.hasOwnProperty("flow")) { //sub layout
-          buildPanel2(paneldiv, btn, baseid+'-'+i+'-'+j);
+          buildPanel(paneldiv, btn, baseid+'-'+i+'-'+j);
         } else {
           buildButton(paneldiv, btn, baseid+'-'+i+'-'+j);
         }
       }
     }
-
     $(baseel).find(".mqed-tab").first().addClass("mqed-activetab");
   }
 
   /*
     Build the editor panel
   */
-  function buildPanel3(baseel, layoutarr, baseid) {
-    if (layoutarr.hasOwnProperty('tabs')) {
-      buildTabPanel(baseel, layoutarr, baseid);
-      return;
-    }
+  function buildPanel(baseel, layoutarr, baseid) {
     var flow = layoutarr.flow;
     var maxsize = 100;
     if (layoutarr.hasOwnProperty('s') && flow=='row') {
@@ -335,64 +339,7 @@ var MQeditor = (function($) {
         flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
       }
       if (btn.hasOwnProperty("flow")) { //sub layout
-        buildPanel2(flowel, btn, baseid+'-'+i);
-      } else {
-        buildButton(flowel, btn, baseid+'-'+i);
-      }
-      curRowSize += thisSize;
-    }
-    wrapel.appendChild(flowel);
-    baseel.appendChild(wrapel);
-  }
-
-  /*
-    Build the editor panel
-  */
-  function buildPanel2(baseel, layoutarr, baseid) {
-    if (layoutarr.hasOwnProperty('tabs')) {
-      buildTabPanel(baseel, layoutarr, baseid);
-      return;
-    }
-    var flow = layoutarr.flow;
-    var maxsize = 100;
-    if (layoutarr.hasOwnProperty('s') && flow=='row') {
-      maxsize = layoutarr.s;
-    }
-    var wrapel = document.createElement("div");
-    if (layoutarr.hasOwnProperty('s')) {
-      wrapel.style.flexGrow = layoutarr.s;
-    }
-    if (layoutarr.hasOwnProperty('class')) {
-      wrapel.className = layoutarr.class;
-    }
-    if (layoutarr.hasOwnProperty('tabpanel')) {
-      wrapel.id = layoutarr.tabpanel.id;
-      wrapel.style.display = layoutarr.tabpanel.hidden ? 'none':'';
-    }
-    var flowel = document.createElement("div");
-    flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
-
-    var curRowSize = 0;
-    var btn, btncont, subwrap;
-    var thisSize = 0;
-    for (var i=0; i < layoutarr.contents.length; i++) {
-      btn = layoutarr.contents[i];
-      if (btn.hasOwnProperty("flow") && btn.contents.length == 0) {
-        continue; // skip container if empty
-      }
-      if (btn.hasOwnProperty('s')) {
-        thisSize = btn.s;
-      } else {
-        thisSize = 1;
-      }
-      if (curRowSize + thisSize > maxsize) {
-        wrapel.appendChild(flowel);
-        curRowSize = 0;
-        var flowel = document.createElement("div");
-        flowel.className = 'mqed-'+flow; //mqed-row or mqed-col
-      }
-      if (btn.hasOwnProperty("flow")) { //sub layout
-        buildPanel2(flowel, btn, baseid+'-'+i);
+        buildPanel(flowel, btn, baseid+'-'+i);
       } else {
         buildButton(flowel, btn, baseid+'-'+i);
       }
@@ -406,28 +353,34 @@ var MQeditor = (function($) {
     Build a button
   */
   function buildButton(baseel, btn, baseid) {
-    var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel,nr,nc,cnt;
+    var btn,btnel,btncont,cmdtype,cmdval;
 
     btncont = document.createElement("div");
     btncont.className = "mqed-btn-cont";
     // set size
-    if (btn.hasOwnProperty('s')) {
+    if (btn.s) {
       btncont.style.flexGrow = btn.s;
     }
+    if (btn.contid) {
+      btncont.id = btn.contid;
+    }
+    if (btn.contclass) {
+      $(btncont).addClass(btn.contclass);
+    }
     baseel.appendChild(btncont);
-    if (!btn.hasOwnProperty('l') && !btn.hasOwnProperty('b') && !btn.hasOwnProperty('p')) {
+    if (!btn.l && !btn.b && !btn.p) {
       //spacer
       return;
     }
 
     btnel = document.createElement("span");
     btnel.tabIndex = 0;
-    if (btn.hasOwnProperty('l')) { // latex button
+    if (btn.l) { // latex button
       btnel.className = "mqed-btn rend";
       btnel.innerText = btn.l;
       cmdtype = 'c';
       cmdval = btn.l.substring(1);
-    } else if (btn.hasOwnProperty('b')) { // rendered text button
+    } else if (btn.b) { // rendered text button
       btnel.className = "mqed-btn rend";
       btnel.innerHTML = btn.b;
       cmdtype = 't';
@@ -442,7 +395,7 @@ var MQeditor = (function($) {
       cmdval = btn.p;
     }
     // override default command type
-    if (btn.hasOwnProperty('c')) {
+    if (btn.c) {
       cmdtype = btn.c;
       if (cmdtype == 'shift') {
         $(btnel).addClass("mqed-shift");
@@ -451,64 +404,23 @@ var MQeditor = (function($) {
       }
     }
     // make it small; 1 for 90%, 2 for 80%, etc.
-    if (btn.hasOwnProperty('sm')) {
+    if (btn.sm) {
       btnel.style.fontSize = (100-10*btn.sm) + '%';
     }
-    if (btn.hasOwnProperty('pos') && btn.pos=='end') {
-      $(btncont).addClass("atend");
-    }
+
     // override what to write
-    if (btn.hasOwnProperty('w')) {
+    if (btn.w) {
       cmdval = btn.w;
     }
-    // button controls a subpanel
-    if (btn.hasOwnProperty('panel')) {
-      subpanel = document.createElement("div");
-      subpanel.id = baseid + '-sub';
-      // set left or right position (as percent)
-      if (btn.hasOwnProperty('left')) {
-        subpanel.style.left = btn.left + '%';
-        // ensure control button is still visible over panel
-        btnel.style.zIndex = 200;
-      } else {
-        subpanel.style.left = 'auto';
-      }
-      $(btnel).addClass("mqed-tab");
-      if (btn.hasOwnProperty('right')) {
-        subpanel.style.right = btn.right + '%';
-      }
-      subpanel.className = "mqed-subpanel";
-      // build subpanel
-      buildPanel(subpanel, btn.panel);
-      baseel.appendChild(subpanel);
-      cmdtype = 'showpanel';
-      cmdval = subpanel.id;
-    } else if (btn.hasOwnProperty('tabcontent')) {
+    if (btn.tabcontent) { // if it has tabcontent, mark it as tab control
       $(btnel).addClass("mqed-tab");
       cmdtype = 'showtabpanel';
       cmdval = baseid+'-tabpanel';
     }
     $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
     $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
-      .on("touchend", function(evt) { $(evt.currentTarget).removeClass("mactive"); });
+      .on("touchend", function(evt) { setTimeout(function() {$(evt.currentTarget).removeClass("mactive"); }, 50);});
     btncont.appendChild(btnel);
-  }
-
-  /*
-    Build a subpanel
-   */
-  function buildPanel(baseel, layoutarr) {
-    var row,btn,rowel,btnel,btncont,r,c,cmdtype,cmdval,subpanel,nr,nc,cnt;
-    for (r=0;r<layoutarr.length;r++) {
-      rowel = document.createElement("div");
-      rowel.className = 'mqed-row';
-      row = layoutarr[r];
-      for (c=0;c<row.length;c++) {
-        btn = row[c];
-        buildButton(rowel, btn);
-      }
-      baseel.appendChild(rowel);
-    }
   }
 
   /*
@@ -541,7 +453,7 @@ var MQeditor = (function($) {
       // do typedText
       if (cmdval.match(/^[a-zA-Z]$/)) {
         // check for shift key being active
-        if ($(event.target).closest('.mqed-subpanel,.mqed-tabpanel').find(".mqed-shift").hasClass("active")) {
+        if ($(event.target).closest('.mqed-tabpanel').find(".mqed-shift").hasClass("active")) {
           cmdval = cmdval.toUpperCase();
         }
       }
@@ -597,36 +509,19 @@ var MQeditor = (function($) {
       if (sel=='') {
         curMQfield.keystroke('Left');
       }
-    } else if (cmdtype=='showpanel') {
-      // show a panel
-      var subpanel = document.getElementById(cmdval);
-      var target = $(event.target).closest('.mqed-btn');
-      if (subpanel.style.left === 'auto') {
-        // set left now
-        var targRight = target.parent().position().left + target.parent().width() + 2;
-        subpanel.style.left = (100*targRight/$("#mqeditor").width()) + '%';
-      }
-      if (subpanel.style.display == 'none') { // show it
-        // first hide any already-showing subpanels
-        target.closest(".mqeditor").find(".mqed-subpanel").hide();
-        target.closest(".mqeditor").find(".mqed-btn.active").removeClass("active");
-        // make panel button active
-        target.addClass("active");
-        $(subpanel).show();
-      } else { //hide it
-        target.removeClass("active");
-        $(subpanel).hide();
-      }
     } else if (cmdtype=='showtabpanel') {
       var target = $(event.target).closest('.mqed-btn');
       target.closest(".mqeditor").find(".mqed-tabpanel").hide();
       target.closest(".mqeditor").find(".mqed-btn.mqed-activetab").removeClass("mqed-activetab");
       $("#"+cmdval).show();
       target.addClass("mqed-activetab");
+      if (config.hasOwnProperty('onTab')) {
+        config.onTab(target[0], config.curlayoutstyle, cmdval);
+      }
     } else if (cmdtype=='shift') {
       // enable Shift in alphabet panel
       var target = $(event.target).closest('.mqed-btn');
-      var subpanel = $(event.target).closest('.mqed-subpanel,.mqed-tabpanel');
+      var subpanel = $(event.target).closest('.mqed-tabpanel');
       var goingActive = !target.hasClass("active");
       if (goingActive) {
         target.addClass("active");
