@@ -22,6 +22,7 @@ var MQeditor = (function($) {
   var MQconfig = {};
   var curMQfield = null;
   var blurTimer = null;
+  var keyRepeatInterval = null;
   var MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
 
   /*
@@ -418,8 +419,9 @@ var MQeditor = (function($) {
       cmdval = baseid+'-tabpanel';
     }
     $(btnel).data("cmdtype", cmdtype).data("cmdval", cmdval);
-    $(btnel).on("click touchstart keydown", makeBtnListener(cmdtype, cmdval))
-      .on("touchend", function(evt) { setTimeout(function() {$(evt.currentTarget).removeClass("mactive"); }, 50);});
+    $(btnel).on("click mousedown touchstart keydown", makeBtnListener(cmdtype, cmdval))
+      .on("touchend", function(evt) { setTimeout(function() {$(evt.currentTarget).removeClass("mactive"); }, 50);})
+      .on("touchend mouseup", function() {clearTimeout(keyRepeatInterval); keyRepeatInterval = null;});
     btncont.appendChild(btnel);
   }
 
@@ -436,6 +438,12 @@ var MQeditor = (function($) {
     Handle an editor button click
   */
   function handleMQbtn(event, cmdtype, cmdval) {
+    //handle backspace with mousedown instead of click to allow repeat
+    if (event.type=='mousedown' && cmdval !== 'Backspace') {
+      return;
+    } else if (event.type=='click' && cmdval === 'Backspace') {
+      return;
+    }
     if (event.type=='keydown' && event.key !== 'Enter') {
       return;
     }
@@ -474,6 +482,12 @@ var MQeditor = (function($) {
     } else if (cmdtype=='k') {
       // do MQ keystroke
       curMQfield.keystroke(cmdval);
+      if (cmdval === 'Backspace') {
+        // set up for repeats - wait 600ms then repeat every 70ms
+        keyRepeatInterval = setTimeout(function () {
+          handleMQbtn(event, cmdtype, cmdval);
+        }, keyRepeatInterval===null ? 600 : 70);
+      }
     } else if (cmdtype=='m') {
       // do MQ matrixCmd
       curMQfield.matrixCmd(cmdval);

@@ -181,9 +181,10 @@ var myMQeditor = (function($) {
               {p:'z'},{p:'x'},{p:'c'},{p:'v'},{p:'b'},
               {p:'n'},{p:'m'},
               {b:'&#x232B;', c:'k', w:'Backspace', s:1.5},
-              {s:2},
               {l:'\\left[\\right]', c:'i', w:'[]'},
+              {l:'\\lbrace{\\rbrace}', c:'t', w:'{'},
               {l:'\\langle{}', c:'c', w:'\\langle'},
+              {p:'Space', s:2, c:'t', w:' '},
               {p:'%'},
               {p:','},
               {b:'&larr;', c:'k', w:'Left'},
@@ -473,7 +474,7 @@ var myMQeditor = (function($) {
       baselayout.tabs[0].tabcontent.unshift({
         flow: 'row',
         s: 1,
-        contents: [{l:'\\left{\\right}', c:'i', w:'{}'}]
+        contents: [{l:'\\lbrace{\\rbrace}', c:'t', w:'{'}]
       }, {s:.1});
     } else if (calcformat.match(/vector/)) {
       baselayout.tabs[0].tabcontent.unshift({
@@ -598,6 +599,8 @@ var MQ = MathQuill.getInterface(MathQuill.getInterface.MAX);
 MQ.config({
   leftRightIntoCmdGoes: 'up',
   supSubsRequireOperand: true,
+  charsThatBreakOutOfSupSub: '=<> ',
+  restrictMismatchedBrackets: true,
   autoCommands: 'pi theta sqrt oo',
   autoParenOperators: true,
   addCommands: {'oo': ['VanillaSymbol', '\\infty ', '&infin;']},

@@ -81,13 +81,14 @@
   color: #339;
   border-radius: 0;
   font-size: 90%;
-  margin-bottom:2px;
+  border-bottom: 2px solid #ccc;
 }
 .mqed-tabpanel {
   position: relative;
 }
 .mqed-tabrow {
   background-color: #fff;
+  margin-bottom: 4px;
 }
 .mqed-tabrow > .mqed-btn-cont {
   flex-grow: unset;
@@ -95,7 +96,8 @@
 }
 .mqed-tabrow > .mqed-btn-cont > .mqed-btn {
   position: static;
-  padding: 4px 12px;
+  padding: 4px 8px;
+  margin-left: 4px;
 }
 .mqed-tab.mqed-activetab {
   border-bottom: 2px solid #009;

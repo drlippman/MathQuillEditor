@@ -1308,7 +1308,7 @@ var saneKeyboardEvents = (function() {
     var keydown = null;
     var keypress = null;
     var usedkeydown = null;
-    
+
     var textarea = jQuery(el);
     var target = jQuery(handlers.container || textarea);
 
@@ -1372,28 +1372,29 @@ var saneKeyboardEvents = (function() {
         checkTextarea = noop; // key that clears the selection, then never
         clearTimeout(timeoutId); // again, 'cos next thing might be blur
       });
-      
+
       if (handlers.options.keyboardPassthrough) {
         var which = e.which || e.keyCode;
         var keyVal = KEY_VALUES[which];
-       
-	//handle copy/paste keystrokes, control sequences
-	if (e.ctrlKey || (e.originalEvent && e.originalEvent.metaKey)) {
-	  var chr = String.fromCharCode(which);
-	  if (chr=='C') {
-	    onSoftCopy();
-	  } else if (chr=='X') {
-	    onSoftCut();
-	  } else if (chr=='V') {
-	    onSoftPaste();
-	  } else {
-	    handleKey();
-	  }
-	  usedkeydown = true;
-	} else if (keyVal || (e.originalEvent && e.originalEvent.metaKey) || e.altKey) {
-	  handleKey();
-	  usedkeydown = true;
-	}
+
+      	//handle copy/paste keystrokes, control sequences
+      	if (e.ctrlKey || (e.originalEvent && e.originalEvent.metaKey)) {
+      	  var chr = String.fromCharCode(which);
+      	  if (chr=='C') {
+      	    onSoftCopy();
+      	  } else if (chr=='X') {
+      	    onSoftCut();
+      	  } else if (chr=='V') {
+      	    onSoftPaste();
+      	  } else {
+      	    handleKey();
+      	  }
+      	  usedkeydown = true;
+      	} else if (keyVal || (e.originalEvent && e.originalEvent.metaKey) || e.altKey) {
+
+      	  handleKey();
+      	  usedkeydown = true;
+      	}
       } else {
       	handleKey();
       }
@@ -1414,16 +1415,16 @@ var saneKeyboardEvents = (function() {
         handlers.writeLatex(window.MathQuillClipboard);
       }
     }
-    
+
     function onKeypress(e) {
       if (handlers.options.keyboardPassthrough) {
         var which = e.which || e.keyCode;
- 
+
         if (!usedkeydown) { //prevent second plan of handled characters
           var chr = String.fromCharCode(which);
           //pass through keypress
-          handlers.typedText(chr);  
-        }	            
+          handlers.typedText(chr);
+        }
       } else {
         // call the key handler for repeated keypresses.
         // This excludes keypresses that happen directly
@@ -1884,31 +1885,29 @@ var saneKeyboardEvents = (function() {
         var which = e.which || e.keyCode;
         var keyVal = KEY_VALUES[which];
 
-		//handle copy/paste keystrokes, control sequences
-		if (e.ctrlKey || (e.originalEvent && e.originalEvent.metaKey)) {
-		  var chr = String.fromCharCode(which);
-		  if (chr=='C') {
-			onSoftCopy();
-			usedkeydown = true;
-		  } else if (chr=='X') {
-			onSoftCut();
-			usedkeydown = true;
-		  } else if (chr=='V') {
-			onSoftPaste();
-			usedkeydown = true;
-		  } else if (chr=='A' || keyVal) {
-			handleKey();
-			usedkeydown = true;
-		  }
-		} else if (keyVal) {
-		  handleKey();
-		  usedkeydown = true;
-		}
+    		//handle copy/paste keystrokes, control sequences
+    		if (e.ctrlKey || (e.originalEvent && e.originalEvent.metaKey)) {
+    		  var chr = String.fromCharCode(which);
+    		  if (chr=='C') {
+      			onSoftCopy();
+      			usedkeydown = true;
+    		  } else if (chr=='X') {
+      			onSoftCut();
+      			usedkeydown = true;
+    		  } else if (chr=='V') {
+      			onSoftPaste();
+      			usedkeydown = true;
+    		  } else if (chr=='A' || keyVal) {
+      			handleKey();
+      			usedkeydown = true;
+    		  }
+    		} else if (keyVal && keyVal !== 'Spacebar') {
+    		  handleKey();
+    		  usedkeydown = true;
+    		}
       } else {
       	handleKey();
       }
-
-      //handleKey();
     }
 
     /**DLMOD**/
@@ -2569,7 +2568,7 @@ Controller.open(function(_) {
   _.delegateMouseEvents = function() {
     var ultimateRootjQ = this.root.jQ;
     //drag-to-select event handling
-    this.container.bind('mousedown.mathquill', function(e) {
+    this.container.bind('mousedown.mathquill touchstart.mathquill', function(e) {
       var rootjQ = $(e.target).closest('.mq-root-block');
       var root = Node.byId[rootjQ.attr(mqBlockId) || ultimateRootjQ.attr(mqBlockId)];
       var ctrlr = root.controller, cursor = ctrlr.cursor, blink = cursor.blink;
@@ -2585,7 +2584,17 @@ Controller.open(function(_) {
       function mousemove(e) { target = $(e.target); }
       function docmousemove(e) {
         if (!cursor.anticursor) cursor.startSelection();
-        ctrlr.seek(target, e.pageX, e.pageY).cursor.select();
+        if (e.type == 'touchmove') {
+          var touch = e.originalEvent.changedTouches[0] || e.originalEvent.touches[0];
+          // for touch, target is the original element, not element under thumb.
+          var touchtarget = $(document.elementFromPoint(touch.pageX, touch.pageY));
+          // this target may not be in original element, so check
+          if (jQuery.contains(rootjQ[0], touchtarget[0])) {
+            ctrlr.seek(touchtarget, touch.pageX, touch.pageY).cursor.select();
+          }
+        } else {
+          ctrlr.seek(target, e.pageX, e.pageY).cursor.select();
+        }
         target = undefined;
       }
       // outside rootjQ, the MathQuill node corresponding to the target (if any)
@@ -2603,8 +2612,8 @@ Controller.open(function(_) {
         }
 
         // delete the mouse handlers now that we're not dragging anymore
-        rootjQ.unbind('mousemove', mousemove);
-        $(e.target.ownerDocument).unbind('mousemove', docmousemove).unbind('mouseup', mouseup);
+        rootjQ.unbind('mousemove touchmove', mousemove);
+        $(e.target.ownerDocument).unbind('mousemove touchmove', docmousemove).unbind('mouseup touchend', mouseup);
       }
 
       if (ctrlr.blurred) {
@@ -2615,8 +2624,8 @@ Controller.open(function(_) {
       cursor.blink = noop;
       ctrlr.seek($(e.target), e.pageX, e.pageY).cursor.startSelection();
 
-      rootjQ.mousemove(mousemove);
-      $(e.target.ownerDocument).mousemove(docmousemove).mouseup(mouseup);
+      rootjQ.bind('mousemove touchmove', mousemove);
+      $(e.target.ownerDocument).bind('mousemove touchmove', docmousemove).bind('mouseup touchend', mouseup);
       // listen on document not just body to not only hear about mousemove and
       // mouseup on page outside field, but even outside page, except iframes: https://github.com/mathquill/mathquill/commit/8c50028afcffcace655d8ae2049f6e02482346c5#commitcomment-6175800
     });
