@@ -31,14 +31,14 @@ Re-rendered using MathQuill: <span id="output-math" class="mathquill-editable">4
 
 var testcases = [ //each is TeX, Asciimath
 	['3^{-1}+2^4+\\left(2+3\\right)^2-3^{2+3}', '3^-1+2^4+(2+3)^2-3^(2+3)', 'Forms of Exponents'],   //forms of exponents
-	['\\sqrt{2+3}+\\nthroot{3}{5}+\\frac{3}{4}-\\frac{2}{3+4}+\\frac{-1}{-5}', 'sqrt(2+3)+root(3)(5)+3/4-(2)/(3+4)+(-1)/(-5)', 'Roots and fractions'], //roots and fractions
+	['\\sqrt{2+3}+\\nthroot{3}{5}+\\frac{3}{4}-\\frac{2}{3+4}+\\frac{-1}{-5}', 'sqrt(2+3)+root(3)(5)+3/4-2/(3+4)+(-1)/(-5)', 'Roots and fractions'], //roots and fractions
 	['4+\\left|2 + 3\\right|+1','4+abs(2+3)+1', 'Absolute values.  Mathquill can\'t do nested abs'], //absolute values
 	['3+\\left(2+\\left(3+4\\right)\\right)+3', '3+(2+(3+4))+3', 'Nested parens'], //nested parens
-	['\\sin^{-1}\\left(\\theta\\right)+\\cos\\left(\\frac{\\pi}{2}x+3\\right)-\\tan^2\\left(x\\right)', 'sin^-1(theta)+cos((pi)/(2)x+3)-tan^2(x)','Trig arctrig and pi'], //pi, trig, arctrig
-	['\\log\\left(x+3\\right)+\\infty+\\log_2\\left(x\\right)+\\varnothing', 'log(x+3)+oo+log_2(x)+DNE', 'Logs and special chars.  DNE is still ok as entry, but this allows \\varnothing as alternative'],  //logs and special chars
+	['\\sin^{-1}\\left(\\theta\\right)+\\cos\\left(\\frac{\\pi}{2}x+3\\right)-\\tan^2\\left(x\\right)', 'sin^-1(theta)+cos((pi)/2x+3)-tan^2(x)','Trig arctrig and pi'], //pi, trig, arctrig
+	['\\log\\left(x+3\\right)+\\infty+\\log_2\\left(x\\right)+\\varnothing+DNE', 'log(x+3)+oo+log_2(x)+DNE+DNE', 'Logs and special chars.  DNE is still ok as entry, but this allows \\varnothing as alternative'],  //logs and special chars
 	['27\\frac{2}{3}', '27 2/3', 'Mixed number'],  //mixed number
 	['2=4+2<9\\le10\\text{ or }3>5\\text{all real numbers}', '2=4+2<9<=10 or 3>5all real numbers', 'Equations and inequalities. '],  //equations and inequalities
-	['\\left(2,3\\right)+\\langle{\\frac{2}{3},4}', '(2,3)+<<2/3,4>>', 'Points and vectors.  To distinguish angle brackets from inequalities, I\'ll need to adjust the grader to accept &lt;&lt;2,3&gt;&gt; for vector input. MathQuill has a weird format for langle.  '], //points and vectors
+	['\\left(2,3\\right)+\\langle{\\frac{2}{3},4}+\\left\\{2,3,4\\right\\}', '(2,3)+<<2/3,4>>+{2,3,4}', 'Points and vectors.  To distinguish angle brackets from inequalities, I\'ll need to adjust the grader to accept &lt;&lt;2,3&gt;&gt; for vector input. MathQuill has a weird format for langle.  '], //points and vectors
 	['\\left(1,2\\right]\\cup\\left[2,3\\right)\\cup(3,4)\\cup[4,5]', '(1,2]U[2,3)U(3,4)U[4,5]', 'Intervals. IMathAS uses U as input for union, but that is not really AsciiMath, so this is a bit hacked up.']
 ];
 var latexMath, latexSource, amSource, AMTsource, outMath;

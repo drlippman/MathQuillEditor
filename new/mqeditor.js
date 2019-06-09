@@ -74,7 +74,8 @@ var MQeditor = (function($) {
           class: "mathquill-math-field",
           text: initval
         });
-        span.css("min-width", (el.hasAttribute("size") ? el.size : 10) + "em");
+        var size = (el.hasAttribute("size") ? (el.size > 3 ? el.size/1.8 : el.size) : 10);
+        span.css("min-width", size + "em");
         span.insertAfter(el);
 
         var thisMQconfig = {
@@ -108,7 +109,10 @@ var MQeditor = (function($) {
         mqfield.focus();
       }
     } else { // disable MQ
-      $(el).attr("type","text").focus();
+      $(el).attr("type","text");
+      if (nofocus !== true) {
+        $(el).focus();
+      }
       $("#mqinput-"+textId).hide();
     }
 
@@ -161,6 +165,12 @@ var MQeditor = (function($) {
     }
     if (config.curlayoutstyle === 'OSK') {
       $("#mqeditor").addClass("fixedbottom");
+      if (!document.getElementById("mqe-fb-spacer")) {
+        var div = document.createElement("div");
+        div.style.height = "200px";
+        div.id = "mqe-fb-spacer";
+        $("body").append(div);
+      }
     } else {
       $("#mqeditor").removeClass("fixedbottom");
     }
@@ -194,7 +204,13 @@ var MQeditor = (function($) {
     }
     // now show and position the editor
     if (config.curlayoutstyle === 'OSK') {
-      $("#mqeditor").slideDown(50);
+      $("#mqeditor").slideDown(50, function () {
+        var mqedheight = $("#mqeditor").height() + 5;
+        var mqedDistBottom = $(window).height() - (mqel.offset().top + mqel.outerHeight() - $(window).scrollTop());
+        if (mqedDistBottom < mqedheight) {
+          $(window).scrollTop($(window).scrollTop() + (mqedheight - mqedDistBottom));
+        }
+      });
     } else {
       $("#mqeditor").show();
     }
@@ -223,7 +239,7 @@ var MQeditor = (function($) {
     if (config.curlayoutstyle == 'under') {
     	var mqfield = $(ref).closest(".mathquill-math-field");
     	var offset = mqfield.offset();
-    	var height = mqfield.height();
+    	var height = mqfield.outerHeight();
       var editorWidth = document.getElementById("mqeditor").offsetWidth;
       var editorLeft = offset.left;
       if (editorLeft + editorWidth > document.documentElement.clientWidth) {
@@ -238,15 +254,18 @@ var MQeditor = (function($) {
     Update the editor position, and update the regular input field
    */
   function onMQedit(mf) {
-  	var el = mf.el();
+	var el = mf.el();
   	positionEditor(el);
   	if (el.id.match(/mqinput/)) {
-      var latex = mf.latex();
-      if (config.hasOwnProperty('fromMQ')) {
-        //convert to input format
-        latex = config.fromMQ(latex);
-      }
+  		var latex = mf.latex();
+  		if (config.hasOwnProperty('fromMQ')) {
+  			//convert to input format
+  			latex = config.fromMQ(latex);
+  		}
   		document.getElementById(el.id.substring(8)).value = latex;
+  		if (config.hasOwnProperty('onEdit')) {
+  			config.onEdit(el.id, latex);
+  		}
   	}
   }
 
@@ -270,13 +289,14 @@ var MQeditor = (function($) {
     var tabdiv = document.createElement("div");
     tabdiv.className = "mqed-row mqed-tabrow";
     var panelcont = document.createElement("div");
-    var btncont, btn, paneldiv;
+    var btncont, btn, paneldiv, tabcnt = 0;
     baseel.appendChild(tabdiv);
     baseel.appendChild(panelcont);
     for (var i=0; i<layoutarr.tabs.length; i++) {
       if (layoutarr.tabs[i].enabled !== true) {
         continue;
       }
+      tabcnt++;
       buildButton(tabdiv, layoutarr.tabs[i], baseid+'-'+i);
       paneldiv = document.createElement("div");
       paneldiv.className = "mqed-row mqed-tabpanel";
@@ -294,7 +314,11 @@ var MQeditor = (function($) {
         }
       }
     }
-    $(baseel).find(".mqed-tab").first().addClass("mqed-activetab");
+    if (tabcnt > 1) {
+      $(baseel).find(".mqed-tab").first().addClass("mqed-activetab");
+    } else {
+      $(tabdiv).hide();
+    }
   }
 
   /*

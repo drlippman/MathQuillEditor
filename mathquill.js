@@ -2587,7 +2587,7 @@ Controller.open(function(_) {
         if (e.type == 'touchmove') {
           var touch = e.originalEvent.changedTouches[0] || e.originalEvent.touches[0];
           // for touch, target is the original element, not element under thumb.
-          var touchtarget = $(document.elementFromPoint(touch.pageX, touch.pageY));
+          var touchtarget = $(document.elementFromPoint(touch.clientX, touch.clientY));
           // this target may not be in original element, so check
           if (jQuery.contains(rootjQ[0], touchtarget[0])) {
             ctrlr.seek(touchtarget, touch.pageX, touch.pageY).cursor.select();
@@ -2622,7 +2622,17 @@ Controller.open(function(_) {
       }
 
       cursor.blink = noop;
-      ctrlr.seek($(e.target), e.pageX, e.pageY).cursor.startSelection();
+      if (e.type == 'touchstart') {
+        var touch = e.originalEvent.changedTouches[0] || e.originalEvent.touches[0];
+        // for touch, target is the original element, not element under thumb.
+        var touchtarget = $(document.elementFromPoint(touch.clientX, touch.clientY));
+        // this target may not be in original element, so check
+        if (jQuery.contains(rootjQ[0], touchtarget[0])) {
+          ctrlr.seek(touchtarget, touch.pageX, touch.pageY).cursor.startSelection();
+        }
+      } else {
+        ctrlr.seek($(e.target), e.pageX, e.pageY).cursor.startSelection();
+      }
 
       rootjQ.bind('mousemove touchmove', mousemove);
       $(e.target.ownerDocument).bind('mousemove touchmove', docmousemove).bind('mouseup touchend', mouseup);
@@ -3235,7 +3245,9 @@ var MathBlock = P(MathElement, function(_, super_) {
 
   _.keystroke = function(key, e, ctrlr) {
     if (ctrlr.options.spaceBehavesLikeTab
-        && (key === 'Spacebar' || key === 'Shift-Spacebar')) {
+        && (key === 'Spacebar' || key === 'Shift-Spacebar')
+        && ctrlr.cursor.parent !== ctrlr.root
+    ) {
       e.preventDefault();
       ctrlr.escapeDir(key === 'Shift-Spacebar' ? L : R, key, e);
       return;
@@ -4813,6 +4825,21 @@ var SupSub = P(MathCommand, function(_, super_) {
       if (cursor[L] && !cursor[R] && !cursor.selection
           && cursor.options.charsThatBreakOutOfSupSub.indexOf(ch) > -1) {
         cursor.insRightOf(this.parent);
+        // if using space to escape, don't write character
+        if (ch == ' ') {
+          return;
+        }
+      }
+      if (cursor[L] && !cursor[R] && !cursor.selection
+          && this.parent[L] instanceof Variable
+      ) {
+          if ((this.parent[L].isItalic !== false
+            && cursor.options.charsThatBreakOutOfSupSubVar.indexOf(ch) > -1)
+            || (this.parent[L].isPartOfOperator
+            && cursor.options.charsThatBreakOutOfSupSubOp.indexOf(ch) > -1)
+          ) {
+            cursor.insRightOf(this.parent);
+          }
       }
       MathBlock.p.write.apply(this, arguments);
     };

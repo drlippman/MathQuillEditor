@@ -3,25 +3,25 @@
 
 TODO:
 
-Create eval version of MQtoAM and display version: different handling of abs, emptyset 
+Create eval version of MQtoAM and display version: different handling of abs, emptyset
 add back space after nodes; compensate with trim on removebrackets
 
 
 
 
-AMtoMQlite.js
-(c) 2012 David Lippman
+AMtoMQ.js
+(c) 2019 David Lippman
 
 Converts AsciiMath in MathQuill's version of TeX
 
 Based on ASCIIMathML, Version 1.4.7 Aug 30, 2005, (c) Peter Jipsen http://www.chapman.edu/~jipsen
 Modified with TeX conversion for IMG rendering Sept 6, 2006 (c) David Lippman http://www.pierce.ctc.edu/dlippman
-Licensed under GNU General Public License (at http://www.gnu.org/copyleft/gpl.html) 
+Licensed under GNU General Public License (at http://www.gnu.org/copyleft/gpl.html)
 */
 var AMtoMQ = function(){
 var decimalsign = '.';
 
-var CONST = 0, UNARY = 1, BINARY = 2, INFIX = 3, LEFTBRACKET = 4, 
+var CONST = 0, UNARY = 1, BINARY = 2, INFIX = 3, LEFTBRACKET = 4,
     RIGHTBRACKET = 5, SPACE = 6, UNDEROVER = 7, DEFINITION = 8,
     LEFTRIGHT = 9, TEXT = 10; // token types
 
@@ -117,8 +117,8 @@ var AMQsymbols = [
 {input:")", tag:"mo", output:")", tex:null, ttype:RIGHTBRACKET},
 {input:"[", tag:"mo", output:"[", tex:null, ttype:LEFTBRACKET},
 {input:"]", tag:"mo", output:"]", tex:null, ttype:RIGHTBRACKET},
-{input:"{", tag:"mo", output:"{", tex:"lbrace", ttype:LEFTBRACKET},
-{input:"}", tag:"mo", output:"}", tex:"rbrace", ttype:RIGHTBRACKET},
+{input:"{", tag:"mo", output:"{", tex:"{", ttype:LEFTBRACKET, notexcopy:true},
+{input:"}", tag:"mo", output:"}", tex:"}", ttype:RIGHTBRACKET, notexcopy:true},
 {input:"|", tag:"mo", output:"|", tex:null, ttype:LEFTRIGHT},
 //{input:"||", tag:"mo", output:"||", tex:null, ttype:LEFTRIGHT},
 {input:"(:", tag:"mo", output:"\u2329", tex:"langle", ttype:LEFTBRACKET},
@@ -189,7 +189,7 @@ AMQsqrt, AMQroot, AMQfrac, AMQdiv, AMQover, AMQsub, AMQsup,
 {input:"hat", tag:"mover", output:"\u005E", tex:null, ttype:UNARY, acc:true},
 {input:"bar", tag:"mover", output:"\u00AF", tex:"overline", ttype:UNARY, acc:true},
 {input:"vec", tag:"mover", output:"\u2192", tex:null, ttype:UNARY, acc:true},
-//{input:"tilde", tag:"mover", output:"~", tex:null, ttype:UNARY, acc:true}, 
+//{input:"tilde", tag:"mover", output:"~", tex:null, ttype:UNARY, acc:true},
 //{input:"dot", tag:"mover", output:".",      tex:null, ttype:UNARY, acc:true},
 //{input:"ddot", tag:"mover", output:"..",    tex:null, ttype:UNARY, acc:true},
 //{input:"ul", tag:"munder", output:"\u0332", tex:"underline", ttype:UNARY, acc:true},
@@ -208,8 +208,8 @@ var AMQnames = []; //list of input symbols
 function AMQinitSymbols() {
   var texsymbols = [], i;
   for (i=0; i<AMQsymbols.length; i++) {
-	  if (AMQsymbols[i].tex && !(typeof AMQsymbols[i].notexcopy == "boolean" && AMQsymbols[i].notexcopy)) { 
-		  texsymbols[texsymbols.length] = {input:AMQsymbols[i].tex, 
+	  if (AMQsymbols[i].tex && !(typeof AMQsymbols[i].notexcopy == "boolean" && AMQsymbols[i].notexcopy)) {
+		  texsymbols[texsymbols.length] = {input:AMQsymbols[i].tex,
 		  tag:AMQsymbols[i].tag, output:AMQsymbols[i].output, ttype:AMQsymbols[i].ttype,
 		  acc:(AMQsymbols[i].acc||false)};
 	  }
@@ -217,20 +217,20 @@ function AMQinitSymbols() {
   AMQsymbols = AMQsymbols.concat(texsymbols);
   AMQsymbols.sort(compareNames);
   for (i=0; i<AMQsymbols.length; i++) AMQnames[i] = AMQsymbols[i].input;
-  
+
 }
 
 function AMQremoveCharsAndBlanks(str,n) {
 //remove n characters and any following blanks
   var st;
-  if (str.charAt(n)=="\\" && str.charAt(n+1)!="\\" && str.charAt(n+1)!=" ") 
+  if (str.charAt(n)=="\\" && str.charAt(n+1)!="\\" && str.charAt(n+1)!=" ")
     st = str.slice(n+1);
   else st = str.slice(n);
   for (var i=0; i<st.length && st.charCodeAt(i)<=32; i=i+1);
   return st.slice(i);
 }
 
-function AMQposition(arr, str, n) { 
+function AMQposition(arr, str, n) {
 // return position >=n where str appears or would be inserted
 // assumes arr is sorted
   if (n==0) {
@@ -271,14 +271,14 @@ function AMQgetSymbol(str) {
   AMQpreviousSymbol=AMQcurrentSymbol;
   if (match!=""){
     AMQcurrentSymbol=AMQsymbols[mk].ttype;
-    return AMQsymbols[mk]; 
+    return AMQsymbols[mk];
   }
 // if str[0] is a digit or - return maxsubstring of digits.digits
   AMQcurrentSymbol=CONST;
   k = 1;
   st = str.slice(0,1);
   var integ = true;
- 	  
+
   while ("0"<=st && st<="9" && k<=str.length) {
     st = str.slice(k,k+1);
     k++;
@@ -310,11 +310,11 @@ function AMQgetSymbol(str) {
 }
 
 function AMQTremoveBrackets(node) {
-	
+
   var st;
   if (node.charAt(0)=='{' && node.charAt(node.length-1)=='}') {
     var leftchop = 0;
-    
+
     st = node.substr(1,5);
     if (st=='\\left') {
     	    st = node.charAt(6);
@@ -331,7 +331,7 @@ function AMQTremoveBrackets(node) {
     	    if (st=="(" || st=="[") {
     	    	    leftchop = 2;
     	    }
-    } 
+    }
     if (leftchop>0) {
     	    //st = node.charAt(node.length-7);
     	    st = node.substr(node.length-8);
@@ -341,7 +341,7 @@ function AMQTremoveBrackets(node) {
     	    } else if (st=='\\rbrace}') {
     	    	    node = '{'+node.substr(leftchop);
     	    	    node = node.substr(0,node.length-14)+'}';
-    	    } 
+    	    }
     }
   }
   return node;
@@ -385,28 +385,34 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
     newFrag = '';
   str = AMQremoveCharsAndBlanks(str,0);
   symbol = AMQgetSymbol(str);             //either a token or a bracket or empty
-  
+
   if (symbol == null || symbol.ttype == RIGHTBRACKET && AMQnestingDepth > 0) {
     return [null,str];
   }
   if (symbol.ttype == DEFINITION) {
-    str = symbol.output+AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = symbol.output+AMQremoveCharsAndBlanks(str,symbol.input.length);
     symbol = AMQgetSymbol(str);
   }
   switch (symbol.ttype) {
   case UNDEROVER:
   case CONST:
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
      var texsymbol = AMQTgetTeXsymbol(symbol);
      if (texsymbol.charAt(0)=="\\" || symbol.tag=="mo") return [texsymbol,str];
      else return ['{'+texsymbol+'}',str];
-    
+
   case LEFTBRACKET:   //read (expr+)
     AMQnestingDepth++;
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
-   
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
+
     result = AMQTparseExpr(str,true);
     AMQnestingDepth--;
+    if (result[0].match(/bmatrix/)) {
+      // special case for bmatrix to avoid double brackets
+      node = result[0].substring(0,result[0].length-7);
+      return [node, result[1]];
+    }
+
     var leftchop = 0;
     if (result[0].substr(0,6)=="\\right") {
     	    st = result[0].charAt(6);
@@ -423,13 +429,13 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
     }
     if (leftchop>0) {
 	    result[0] = result[0].substr(leftchop);
-	    if (typeof symbol.invisible == "boolean" && symbol.invisible) 
+	    if (typeof symbol.invisible == "boolean" && symbol.invisible)
 		    node = '{'+result[0]+'}';
 	    else {
 		    node = '{'+AMQTgetTeXbracket(symbol) + result[0]+'}';
-	    }    
+	    }
     } else {
-	    if (typeof symbol.invisible == "boolean" && symbol.invisible) 
+	    if (typeof symbol.invisible == "boolean" && symbol.invisible)
 		    node = '{\\left.'+result[0]+'}';
 	    else {
 		    node = '{\\left'+AMQTgetTeXbracket(symbol) + result[0]+'}';
@@ -455,7 +461,7 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
       str = AMQremoveCharsAndBlanks(str,i+1);
       return [newFrag,str];
   case UNARY:
-      str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+      str = AMQremoveCharsAndBlanks(str,symbol.input.length);
       result = AMQTparseSexpr(str);
       if (result[0]==null) return ['{'+AMQTgetTeXsymbol(symbol)+'}',str];
       if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
@@ -479,11 +485,11 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
       } else if (typeof symbol.acc == "boolean" && symbol.acc) {   // accent
 	      //return ['{'+AMQTgetTeXsymbol(symbol)+'{'+result[0]+'}}',result[1]];
 	      return [AMQTgetTeXsymbol(symbol)+'{'+result[0]+'}',result[1]];
-      } else {                        // font change command  
+      } else {                        // font change command
 	    return ['{'+AMQTgetTeXsymbol(symbol)+'{'+result[0]+'}}',result[1]];
       }
   case BINARY:
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
     result = AMQTparseSexpr(str);
     if (result[0]==null) return ['{'+AMQTgetTeXsymbol(symbol)+'}',str];
     result[0] = AMQTremoveBrackets(result[0]);
@@ -491,7 +497,7 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
     if (result2[0]==null) return ['{'+AMQTgetTeXsymbol(symbol)+'}',str];
     result2[0] = AMQTremoveBrackets(result2[0]);
     if (symbol.input=="color") {
-    	newFrag = '{\\color{'+result[0].replace(/[\{\}]/g,'')+'}'+result2[0]+'}';    
+    	newFrag = '{\\color{'+result[0].replace(/[\{\}]/g,'')+'}'+result2[0]+'}';
     } else  if (symbol.input=="root") {
 	    newFrag = '{\\sqrt['+result[0]+']{'+result2[0]+'}}';
     } else {
@@ -499,7 +505,7 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
     }
     return [newFrag,result2[1]];
   case INFIX:
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
     return [symbol.output,str];
   case SPACE:
     str = AMQremoveCharsAndBlanks(str,symbol.input.length);
@@ -507,7 +513,7 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
   case LEFTRIGHT:
 //    if (rightvert) return [null,str]; else rightvert = true;
     AMQnestingDepth++;
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
     result = AMQTparseExpr(str,false);
     AMQnestingDepth--;
     var st = "";
@@ -520,10 +526,10 @@ function AMQTparseSexpr(str) { //parses str and returns [node,tailstr]
       node = '{\\mid}';
       return [node,str];
     }
-   
+
   default:
 //alert("default");
-    str = AMQremoveCharsAndBlanks(str,symbol.input.length); 
+    str = AMQremoveCharsAndBlanks(str,symbol.input.length);
     return ['{'+AMQTgetTeXsymbol(symbol)+'}',str];
   }
 }
@@ -538,7 +544,7 @@ function AMQTparseIexpr(str) {
   symbol = AMQgetSymbol(str);
   if (symbol.ttype == INFIX && symbol.input != "/") {
     str = AMQremoveCharsAndBlanks(str,symbol.input.length);
-   // if (symbol.input == "/") result = AMQTparseIexpr(str); else 
+   // if (symbol.input == "/") result = AMQTparseIexpr(str); else
     result = AMQTparseSexpr(str);
     if (result[0] == null) // show box in place of missing argument
 	    result[0] = '{}';
@@ -571,8 +577,8 @@ function AMQTparseIexpr(str) {
     		str = result[1];
     	}
     }
-  } 
-  
+  }
+
   return [node,str];
 }
 
@@ -589,7 +595,7 @@ function AMQTparseExpr(str,rightbracket) {
     if (symbol.ttype == INFIX && symbol.input == "/") {
       str = AMQremoveCharsAndBlanks(str,symbol.input.length);
       result = AMQTparseIexpr(str);
-      
+
       if (result[0] == null) // show box in place of missing argument
 	      result[0] = '{}';
       else result[0] = AMQTremoveBrackets(result[0]);
@@ -600,7 +606,7 @@ function AMQTparseExpr(str,rightbracket) {
       newFrag += node;
       symbol = AMQgetSymbol(str);
     }  else if (node!=undefined) newFrag += node;
-  } while ((symbol.ttype != RIGHTBRACKET && 
+  } while ((symbol.ttype != RIGHTBRACKET &&
            (symbol.ttype != LEFTRIGHT || rightbracket)
            || AMQnestingDepth == 0) && symbol!=null && symbol.output!="");
   if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
@@ -611,7 +617,7 @@ function AMQTparseExpr(str,rightbracket) {
 		if (right==')' || right==']') {
 			var left = newFrag.charAt(6);
 			if ((left=='(' && right==')' && symbol.output != '}') || (left=='[' && right==']')) {
-				var mxout = '\\matrix{';
+				var mxout = '\\begin{bmatrix}';
 				var pos = new Array(); //position of commas
 				pos.push(0);
 				var matrix = true;
@@ -672,13 +678,14 @@ function AMQTparseExpr(str,rightbracket) {
 						mxout += subarr.join('&');
 					}
 				}
-				mxout += '}';
+				mxout += '\\end{bmatrix}';
 				if (matrix) { newFrag = mxout;}
 			}
 		}
 	}
-    
+
     str = AMQremoveCharsAndBlanks(str,symbol.input.length);
+
     if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
       node = '\\right'+AMQTgetTeXbracket(symbol); //AMQcreateMmlNode("mo",document.createTextNode(symbol.output));
       newFrag += node;
@@ -687,13 +694,12 @@ function AMQTparseExpr(str,rightbracket) {
 	    newFrag += '\\right.';
 	    addedright = true;
     }
-   
+
   }
   if(AMQnestingDepth>0 && !addedright) {
 	  newFrag += '\\right.'; //adjust for non-matching left brackets
 	  //todo: adjust for non-matching right brackets
   }
- 
   return [newFrag,str];
 }
 
@@ -702,11 +708,13 @@ AMQinitSymbols();
 return function(str) {
  AMQnestingDepth = 0;
   str = str.replace(/(&nbsp;|\u00a0|&#160;)/g,"");
-  str = str.replace(/^\s*<(.*?)>\s*$/,"<<$1>>");
+  str = str.replace(/^\s*<([^<].*?[^>])>\s*$/,"<<$1>>");
   str = str.replace(/&gt;/g,">");
   str = str.replace(/&lt;/g,"<");
   str = str.replace(/\s*\bor\b\s*/g,'" or "');
   str = str.replace(/all\s+real\s+numbers/g,'"all real numbers"');
+  str = str.replace(/(\)|\])\s*u\s*(\(|\[)/g,"$1U$2");
+  str = str.replace(/DNE/g,'"DNE"');
   if (str.match(/\S/)==null) {
 	  return "";
   }
@@ -735,7 +743,7 @@ function MQtoAM(tex,display) {
 				lb = tex.indexOf('\\left|',i+1);
 				rb = tex.indexOf('\\right|',i+1);
 				if (lb !=-1 && lb < rb) {	//if another left |
-					nested++;  
+					nested++;
 				} else if (rb!=-1 && (lb == -1 || rb < lb)) {  //if right |
 					nested--;
 				}
@@ -749,21 +757,25 @@ function MQtoAM(tex,display) {
 		}
 		tex = tex.replace(/\\text{\s*or\s*}/g,' or ');
 		tex = tex.replace(/\\text{all\s+real\s+numbers}/g,'all real numbers');
+		tex = tex.replace(/\\text{DNE}/g,'DNE');
 		tex = tex.replace(/\\varnothing/g,'DNE');
 		tex = tex.replace(/\\Re/g,'all real numbers');
 	} else {
 		tex = tex.replace(/\\Re/g,'RR');
 	}
-	
+	tex = tex.replace(/\\begin{.?matrix}(.*?)\\end{.?matrix}/g, function(m, p) {
+		return '[(' + p.replace(/\\\\/g,'),(').replace(/&/g,',') + ')]';
+	});
 	tex = tex.replace(/\\le(?!f)/g,'<=');
 	tex = tex.replace(/\\ge/g,'>=');
 	tex = tex.replace(/\\approx/g,'~~');
 	tex = tex.replace(/(\\arrow|\\rightarrow)/g,'rarr');
 	tex = tex.replace(/\\cup/g,'U');
+	tex = tex.replace(/\\left\\{/g,'lbrace').replace(/\\right\\}/g,'rbrace');
 	tex = tex.replace(/\\left/g,'');
 	tex = tex.replace(/\\right/g,'');
-	tex = tex.replace(/\\langle/g,'<');
-	tex = tex.replace(/\\rangle/g,'>');
+	tex = tex.replace(/\\langle/g,'<<');
+	tex = tex.replace(/\\rangle/g,'>>');
 	tex = tex.replace(/\\cdot/g,'*');
 	tex = tex.replace(/\\infty/g,'oo');
 	tex = tex.replace(/\\nthroot/g,'root');
@@ -785,9 +797,14 @@ function MQtoAM(tex,display) {
 			tex = tex.substring(0,i) + tex.substring(i+4);
 		}
 	}
-	tex = tex.replace(/_{([\d\.]+)}/g,'_$1');
-	tex = tex.replace(/{/g,'(');
-	tex = tex.replace(/}/g,')');
+	//separate un-braced subscripts using latex rules
+	tex = tex.replace(/_(\d)(\d)/g, '_$1 $2');
+	tex = tex.replace(/\^(\d)(\d)/g, '^$1 $2');
+	tex = tex.replace(/_{([\d\.]+)}\^/g,'_$1^');
+	tex = tex.replace(/_{([\d\.]+)}([^\^])/g,'_$1 $2');
+	tex = tex.replace(/_{([\d\.]+)}$/g,'_$1');
+	tex = tex.replace(/{/g,'(').replace(/}/g,')');
+	tex = tex.replace(/lbrace/g,'{').replace(/rbrace/g,'}');
 	tex = tex.replace(/\(([\d\.]+)\)\/\(([\d\.]+)\)/g,'$1/$2');  //change (2)/(3) to 2/3
 	tex = tex.replace(/\/\(([\d\.]+)\)/g,'/$1');  //change /(3) to /3
 	tex = tex.replace(/\(([\d\.]+)\)\//g,'$1/');  //change (3)/ to 3/

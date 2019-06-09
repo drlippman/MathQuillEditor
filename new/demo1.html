@@ -6,11 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script type="text/javascript" src="../support/jquery.min.js"></script>
   <script type="text/javascript" src="../mathquill.js?v=042819"></script>
-  <link rel="stylesheet" type="text/css" href="../mathquill.css" />
+  <link rel="stylesheet" type="text/css" href="../mathquill-basic.css" />
   <link rel="stylesheet" type="text/css" href="mqeditor.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
   <script type="text/javascript" src="mqeditor.js"></script>
   <script type="text/javascript" src="demo1.js"></script>
   <style>
+    body {
+      font-family: sans-serif;
+    }
     @supports (-webkit-overflow-scrolling: touch) {
       input[type=text] {
         font-size: 16px;
@@ -25,6 +29,19 @@
       border-top-right-radius: 4px;
     }
 
+    .mq-math-mode .mq-font {
+      font: 1em KaTeX_Main, "Times New Roman", Symbola, serif;
+    }
+    .mq-math-mode .mq-text-mode,
+    .mq-math-mode .mq-nonSymbola,
+    .mq-math-mode .mq-operator-name {
+      font-family: KaTeX_Main, "Times New Roman", Symbola, serif;
+    }
+    .mq-math-mode var,
+    .mq-math-mode i,
+    .mq-math-mode i.mq-font {
+      font-family: KaTeX_Math, "Times New Roman", Symbola, serif;
+    }
   </style>
 </head>
 <body>

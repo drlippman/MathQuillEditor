@@ -61,7 +61,7 @@
   padding: 0;
   border-radius: 4px;
   cursor: pointer;
-  font-family: Symbola, "Times New Roman", serif;
+  /*font-family: KaTeX_Main, MJXc-TeX-main-R,MJXc-TeX-main-Rw, "Times New Roman", Symbola, serif;*/
 }
 .mqed-btn:hover {
   background-color: #f2f2ff !important;
